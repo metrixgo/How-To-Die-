@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using TMPro;
 using UnityEngine;
@@ -16,9 +15,12 @@ public class GameManager : MonoBehaviour
 
     [Header("Rendering")]
     [SerializeField] private Volume volume;
+    [SerializeField] private Image gameScreen;
+    [SerializeField] private Image backScreen;
+    [SerializeField] private Image grainScreen;
     [SerializeField] private Image frontScreen;
-    [SerializeField] private GameObject ask;
-    [SerializeField] private GameObject sleep;
+    [SerializeField] private CanvasGroup ask;
+    [SerializeField] private CanvasGroup sleep;
     [SerializeField] private TextMeshProUGUI dialogue;
     [SerializeField] private TextMeshProUGUI quitPrompt;
 
@@ -27,6 +29,11 @@ public class GameManager : MonoBehaviour
     private GameInput input;
     private InputAction pauseAction;
     private InputAction skipAction;
+
+    private Color grainScreenColor = new Color(1f, 1f, 1f, 5f / 255f);
+    private Color frontScreenColor = new Color(0f, 0f, 0f, 50f / 255f);
+
+    private bool started = false;
 
     private float quitProgress = 0f;
 
@@ -37,6 +44,9 @@ public class GameManager : MonoBehaviour
         input = new GameInput();
         pauseAction = input.Game.Pause;
         skipAction = input.Game.Skip;
+
+        grainScreen.color = grainScreenColor;
+        frontScreen.color = frontScreenColor;
     }
 
     private void OnEnable()
@@ -51,9 +61,13 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-        if (pauseAction.IsPressed()) quitProgress += Time.deltaTime / 6f;
-        quitPrompt.color = Color.Lerp(Color.clear, Color.white, quitProgress);
-        if (quitProgress > 1) Application.Quit();
+        if (started)
+        {
+            if (pauseAction.IsPressed()) quitProgress += Time.deltaTime / 6f;
+            quitPrompt.color = Color.Lerp(Color.clear, Color.white, quitProgress);
+            frontScreen.color = Color.Lerp(Color.clear, Color.black, quitProgress);
+            if (quitProgress > 1) Application.Quit();
+        }
     }
 
     public void Ask()
@@ -68,37 +82,76 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator StartGame()
     {
-        ask.SetActive(false);
-        sleep.SetActive(false);
+        started = true;
+        frontScreen.raycastTarget = true;
+        StartCoroutine(HideButtons());
+
+        float t = 0f, l = 3f, d = 0.7f;
+        while (t < l)
+        {
+            rainAmbience.volume = Mathf.Lerp(1f, 1f - d, t / l);
+            windAmbience.volume = Mathf.Lerp(1f, 1f - d, t / l);
+            frontScreen.color = Color.Lerp(frontScreenColor, Color.clear, t / l);
+
+            t += Time.deltaTime;
+            yield return null;
+        }
+
+        yield return new WaitForSeconds(1f);
+        yield return StartCoroutine(DisplayDialogue("Mommy!"));
+        yield return new WaitForSeconds(1f);
+        yield return StartCoroutine(DisplayDialogue("Yes, honey?"));
+        yield return new WaitForSeconds(1f);
+        yield return StartCoroutine(DisplayDialogue("Mom... how do people die?"));
+        yield return new WaitForSeconds(3f);
+        yield return StartCoroutine(DisplayDialogue("......"));
+        yield return new WaitForSeconds(1f);
+        yield return StartCoroutine(DisplayDialogue("Mom...?"));
         yield return new WaitForSeconds(0.5f);
+        yield return StartCoroutine(DisplayDialogue("Why are you asking this?"));
+        yield return new WaitForSeconds(1f);
+        yield return StartCoroutine(DisplayDialogue("You said people all die one day..."));
+        yield return new WaitForSeconds(0.5f);
+        yield return StartCoroutine(DisplayDialogue("But I don't understand how people die..."));
+        yield return new WaitForSeconds(3f);
+        yield return StartCoroutine(DisplayDialogue("Well... this is a deep question..."));
+        yield return new WaitForSeconds(0.5f);
+        yield return StartCoroutine(DisplayDialogue("I'm not sure how to describe it to you..."));
+        yield return new WaitForSeconds(1f);
+        yield return StartCoroutine(DisplayDialogue("Mom! Please? I want to know..."));
+        yield return new WaitForSeconds(3f);
+        yield return StartCoroutine(DisplayDialogue("Okay."));
+        yield return new WaitForSeconds(0.5f);
+        yield return StartCoroutine(DisplayDialogue("People die in different ways... because of different reasons."));
+        yield return new WaitForSeconds(1f);
+        yield return StartCoroutine(DisplayDialogue("Someone dies peacefully, without any struggle or resistance."));
     }
 
     private IEnumerator QuitGame()
     {
-        ask.SetActive(false);
-        sleep.SetActive(false);
-        yield return new WaitForSeconds(0.5f);
+        frontScreen.raycastTarget = true;
+        StartCoroutine(HideButtons());
 
-        float t = 0f, l = 3f, d = 0.5f;
-        while(t < l)
+        float t = 0f, l = 2f, d = 0.5f;
+        while (t < l)
         {
             rainAmbience.volume = Mathf.Lerp(1f, 1f - d, t / l);
             windAmbience.volume = Mathf.Lerp(1f, 1f - d, t / l);
             eye.intensity.value = Mathf.Lerp(0f, d, t / l);
-            frontScreen.color = Color.Lerp(Color.clear, Color.black * d, t / l);
+            frontScreen.color = Color.Lerp(frontScreenColor, frontScreenColor * (1f + d), t / l);
 
             t += Time.deltaTime;
             yield return null;
         }
 
         t = 0f;
-        l = 3f;
+        l = 2f;
         while (t < l)
         {
             rainAmbience.volume = Mathf.Lerp(1f - d, 1f, t / l);
             windAmbience.volume = Mathf.Lerp(1f - d, 1f, t / l);
             eye.intensity.value = Mathf.Lerp(d, 0f, t / l);
-            frontScreen.color = Color.Lerp(Color.black * d, Color.clear, t / l);
+            frontScreen.color = Color.Lerp(frontScreenColor * (1f + d), frontScreenColor, t / l);
 
             t += Time.deltaTime;
             yield return null;
@@ -106,13 +159,13 @@ public class GameManager : MonoBehaviour
 
         yield return new WaitForSeconds(1.0f);
         t = 0f;
-        l = 8f;
+        l = 6f;
         while (t < l)
         {
             rainAmbience.volume = Mathf.Lerp(1f, 0f, t / l);
             windAmbience.volume = Mathf.Lerp(1f, 0f, t / l);
             eye.intensity.value = Mathf.Lerp(0f, 1f, t / l);
-            frontScreen.color = Color.Lerp(Color.clear, Color.black, t / l);
+            frontScreen.color = Color.Lerp(frontScreenColor, Color.black, t / l);
 
             t += Time.deltaTime;
             yield return null;
@@ -121,13 +174,29 @@ public class GameManager : MonoBehaviour
         Application.Quit();
     }
 
+    private IEnumerator HideButtons()
+    {
+        float t = 0f, l = 1f;
+        while (t < l)
+        {
+            ask.alpha = Mathf.Lerp(1f, 0f, t / l);
+            sleep.alpha = Mathf.Lerp(1f, 0f, t / l);
+
+            t += Time.deltaTime;
+            yield return null;
+        }
+
+        ask.gameObject.SetActive(false);
+        sleep.gameObject.SetActive(false);
+    }
+
     private IEnumerator DisplayDialogue(string content)
     {
         writingEffectsPlayer.Play();
         dialogue.text = "";
         dialogue.color = Color.white;
 
-        float t = 0, gap = 0.02f;
+        float t = 0, gap = 0.05f;
         int idx = 0;
         while (idx < content.Length)
         {
@@ -151,10 +220,10 @@ public class GameManager : MonoBehaviour
         yield return new WaitUntil(() => skipAction.WasPressedThisFrame());
 
         t = 0;
-        float l = 0.5f;
+        float l = 0.2f;
         while (t < l)
         {
-            dialogue.color = Color.Lerp(Color.white, Color.clear, t/ l);
+            dialogue.color = Color.Lerp(Color.white, Color.clear, t / l);
             t += Time.deltaTime;
             yield return null;
         }
