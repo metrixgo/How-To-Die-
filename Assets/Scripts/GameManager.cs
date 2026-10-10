@@ -31,9 +31,13 @@ public class GameManager : MonoBehaviour
     private InputAction skipAction;
 
     private Color grainScreenColor = new Color(1f, 1f, 1f, 5f / 255f);
-    private Color frontScreenColor = new Color(0f, 0f, 0f, 50f / 255f);
+    private Color startScreenColor = new Color(0f, 0f, 0f, 50f / 255f);
+
+    private float cutSceneVolume = 0.3f;
+    private float sceneVolume = 0.05f;
 
     private bool started = false;
+    private bool inCutScene = true;
 
     private float quitProgress = 0f;
 
@@ -46,7 +50,7 @@ public class GameManager : MonoBehaviour
         skipAction = input.Game.Skip;
 
         grainScreen.color = grainScreenColor;
-        frontScreen.color = frontScreenColor;
+        frontScreen.color = startScreenColor;
     }
 
     private void OnEnable()
@@ -63,10 +67,12 @@ public class GameManager : MonoBehaviour
     {
         if (started)
         {
-            if (pauseAction.IsPressed()) quitProgress += Time.deltaTime / 6f;
+            if (pauseAction.IsPressed()) quitProgress += Time.deltaTime / 5f;
+            else quitProgress -= Time.deltaTime;
+            if (quitProgress > 1) Application.Quit();
+            else if (quitProgress < 0) quitProgress = 0;
             quitPrompt.color = Color.Lerp(Color.clear, Color.white, quitProgress);
             frontScreen.color = Color.Lerp(Color.clear, Color.black, quitProgress);
-            if (quitProgress > 1) Application.Quit();
         }
     }
 
@@ -82,20 +88,20 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator StartGame()
     {
-        started = true;
         frontScreen.raycastTarget = true;
         StartCoroutine(HideButtons());
 
-        float t = 0f, l = 3f, d = 0.7f;
+        float t = 0f, l = 3f;
         while (t < l)
         {
-            rainAmbience.volume = Mathf.Lerp(1f, 1f - d, t / l);
-            windAmbience.volume = Mathf.Lerp(1f, 1f - d, t / l);
-            frontScreen.color = Color.Lerp(frontScreenColor, Color.clear, t / l);
+            rainAmbience.volume = Mathf.Lerp(1f, cutSceneVolume, t / l);
+            windAmbience.volume = Mathf.Lerp(1f, cutSceneVolume, t / l);
+            frontScreen.color = Color.Lerp(startScreenColor, Color.clear, t / l);
 
             t += Time.deltaTime;
             yield return null;
         }
+        started = true;
 
         yield return new WaitForSeconds(1f);
         yield return StartCoroutine(DisplayDialogue("Mommy!"));
@@ -125,6 +131,7 @@ public class GameManager : MonoBehaviour
         yield return StartCoroutine(DisplayDialogue("People die in different ways... because of different reasons."));
         yield return new WaitForSeconds(1f);
         yield return StartCoroutine(DisplayDialogue("Someone dies peacefully, without any struggle or resistance."));
+        yield return StartCoroutine(ExitCutScene());
     }
 
     private IEnumerator QuitGame()
@@ -138,7 +145,7 @@ public class GameManager : MonoBehaviour
             rainAmbience.volume = Mathf.Lerp(1f, 1f - d, t / l);
             windAmbience.volume = Mathf.Lerp(1f, 1f - d, t / l);
             eye.intensity.value = Mathf.Lerp(0f, d, t / l);
-            frontScreen.color = Color.Lerp(frontScreenColor, frontScreenColor * (1f + d), t / l);
+            frontScreen.color = Color.Lerp(startScreenColor, startScreenColor * (1f + d), t / l);
 
             t += Time.deltaTime;
             yield return null;
@@ -151,7 +158,7 @@ public class GameManager : MonoBehaviour
             rainAmbience.volume = Mathf.Lerp(1f - d, 1f, t / l);
             windAmbience.volume = Mathf.Lerp(1f - d, 1f, t / l);
             eye.intensity.value = Mathf.Lerp(d, 0f, t / l);
-            frontScreen.color = Color.Lerp(frontScreenColor * (1f + d), frontScreenColor, t / l);
+            frontScreen.color = Color.Lerp(startScreenColor * (1f + d), startScreenColor, t / l);
 
             t += Time.deltaTime;
             yield return null;
@@ -165,7 +172,7 @@ public class GameManager : MonoBehaviour
             rainAmbience.volume = Mathf.Lerp(1f, 0f, t / l);
             windAmbience.volume = Mathf.Lerp(1f, 0f, t / l);
             eye.intensity.value = Mathf.Lerp(0f, 1f, t / l);
-            frontScreen.color = Color.Lerp(frontScreenColor, Color.black, t / l);
+            frontScreen.color = Color.Lerp(startScreenColor, Color.black, t / l);
 
             t += Time.deltaTime;
             yield return null;
@@ -188,6 +195,40 @@ public class GameManager : MonoBehaviour
 
         ask.gameObject.SetActive(false);
         sleep.gameObject.SetActive(false);
+    }
+
+    private IEnumerator EnterCutScene()
+    {
+        inCutScene = true;
+
+        float t = 0, l = 2f;
+        while (t < l)
+        {
+            rainAmbience.volume = Mathf.Lerp(sceneVolume, cutSceneVolume, t / l);
+            windAmbience.volume = Mathf.Lerp(sceneVolume, cutSceneVolume, t / l);
+            backScreen.color = Color.Lerp(Color.clear, Color.black, t / l);
+            grainScreen.color = Color.Lerp(Color.clear, grainScreenColor, t / l);
+
+            t += Time.deltaTime;
+            yield return null;
+        }
+    }
+    
+    private IEnumerator ExitCutScene()
+    {
+        float t = 0, l = 2f;
+        while (t < l)
+        {
+            rainAmbience.volume = Mathf.Lerp(cutSceneVolume, sceneVolume, t / l);
+            windAmbience.volume = Mathf.Lerp(cutSceneVolume, sceneVolume, t / l);
+            backScreen.color = Color.Lerp(Color.black, Color.clear, t / l);
+            grainScreen.color = Color.Lerp(grainScreenColor, Color.clear, t / l);
+
+            t += Time.deltaTime;
+            yield return null;
+        }
+
+        inCutScene = false;
     }
 
     private IEnumerator DisplayDialogue(string content)
