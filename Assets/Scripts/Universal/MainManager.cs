@@ -583,33 +583,6 @@ public class MainManager : MonoBehaviour
                     );
                     break;
 
-                case TriggerType.GlitchEffect:
-                    switch (trig.glitchEffectType)
-                    {
-                        case GlitchEffectType.DigitalGlitch:
-                            player.SetDigitalGlitch(trig.glitchEffectIntensity);
-                            break;
-                        case GlitchEffectType.ScanLineJitter:
-                            player.SetScanLineJitter(trig.glitchEffectIntensity);
-                            break;
-                        case GlitchEffectType.VerticalJump:
-                            player.SetVerticalJump(trig.glitchEffectIntensity);
-                            break;
-                        case GlitchEffectType.HorizontalShake:
-                            player.SetHorizontalShake(trig.glitchEffectIntensity);
-                            break;
-                        case GlitchEffectType.ColorDrift:
-                            player.SetColorDrift(trig.glitchEffectIntensity);
-                            break;
-                        case GlitchEffectType.HorizontalRipple:
-                            player.SetHorizontalRipple(trig.glitchEffectIntensity);
-                            break;
-                        default:
-                            Debug.LogError("Unimplemented Glitch Effect Type: " + trig.glitchEffectType);
-                            break;
-                    }
-                    break;
-
                 case TriggerType.Custom:
                     trig.customFunction.Invoke();
                     break;

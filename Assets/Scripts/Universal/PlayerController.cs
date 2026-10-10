@@ -1,5 +1,4 @@
-﻿using Glitch;
-using System.Collections;
+﻿using System.Collections;
 using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -70,9 +69,6 @@ public class PlayerController : MonoBehaviour
     private CinemachineInputAxisController camController;
     private InputAxisControllerBase<CinemachineInputAxisController.Reader>.Controller camX;
     private InputAxisControllerBase<CinemachineInputAxisController.Reader>.Controller camY;
-
-    private AnalogGlitchController analogGlitchController;
-    private DigitalGlitchController digitalGlitchController;
 
     private Interactable curItem;
     private Interactable newItem;
@@ -145,9 +141,6 @@ public class PlayerController : MonoBehaviour
         camPanTilt = playerCam.GetComponent<CinemachinePanTilt>();
         camBob = playerCam.GetComponent<CinemachineBasicMultiChannelPerlin>();
         camController = playerCam.GetComponent<CinemachineInputAxisController>();
-
-        analogGlitchController = Camera.main.GetComponent<AnalogGlitchController>();
-        digitalGlitchController = Camera.main.GetComponent<DigitalGlitchController>();
 
         foreach (InputAxisControllerBase<CinemachineInputAxisController.Reader>.Controller controller in camController.Controllers)
         {
@@ -451,11 +444,4 @@ public class PlayerController : MonoBehaviour
     public void CanJump(bool can) => CanDo.Jump = can;
     public void CanCrouch(bool can) => CanDo.Crouch = can;
     public void CanInteract(bool can) => CanDo.Interact = can;
-
-    public void SetDigitalGlitch(float intensity) => digitalGlitchController.Intensity = intensity;
-    public void SetScanLineJitter(float intensity) => analogGlitchController.ScanLineJitter = intensity;
-    public void SetVerticalJump(float intensity) => analogGlitchController.VerticalJump = intensity;
-    public void SetHorizontalShake(float intensity) => analogGlitchController.HorizontalShake = intensity;
-    public void SetColorDrift(float intensity) => analogGlitchController.ColorDrift = intensity;
-    public void SetHorizontalRipple(float intensity) => analogGlitchController.HorizontalRipple = intensity;
 }

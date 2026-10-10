@@ -111,11 +111,6 @@ public class TriggerPropertyDrawer : PropertyDrawer
                 DrawProperty(ref rect, property, "displayEndingDescription", "Description");
                 break;
 
-            case TriggerType.GlitchEffect:
-                DrawProperty(ref rect, property, "glitchEffectType", "Type");
-                DrawProperty(ref rect, property, "glitchEffectIntensity", "Intensity");
-                break;
-
             case TriggerType.Custom:
                 DrawProperty(ref rect, property, "customFunction", "Function");
                 break;
@@ -246,11 +241,6 @@ public class TriggerPropertyDrawer : PropertyDrawer
             case TriggerType.DisplayEnding:
                 AddHeightOfProperty(ref height, property, "displayEndingTitle");
                 AddHeightOfProperty(ref height, property, "displayEndingDescription");
-                break;
-
-            case TriggerType.GlitchEffect:
-                AddHeightOfProperty(ref height, property, "glitchEffectType");
-                AddHeightOfProperty(ref height, property, "glitchEffectIntensity");
                 break;
 
             case TriggerType.Custom:
