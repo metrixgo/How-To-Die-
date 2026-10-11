@@ -24,6 +24,9 @@ public class GameManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI dialogue;
     [SerializeField] private TextMeshProUGUI quitPrompt;
 
+    [Header("Hospital")]
+    [SerializeField] private GameObject player;
+
     private Vignette eye;
 
     private GameInput input;
@@ -34,7 +37,7 @@ public class GameManager : MonoBehaviour
     private Color startScreenColor = new Color(0f, 0f, 0f, 50f / 255f);
 
     private float cutSceneVolume = 0.3f;
-    private float sceneVolume = 0.05f;
+    private float sceneVolume = 0.1f;
 
     private bool started = false;
     private bool inCutScene = true;
