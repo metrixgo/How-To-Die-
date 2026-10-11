@@ -22,7 +22,7 @@ public class FixedCamera : MonoBehaviour
 
     private void Update()
     {
-        if (!GameManager.instance.inCutScene)
+        if (!GameManager.Instance.inCutScene)
         {
             camX.Input.Gain = sensitivity;
             camY.Input.Gain = -sensitivity;
