@@ -25,6 +25,10 @@ public class GameManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI quitPrompt;
 
     public static GameManager Instance { get; private set; }
+    public Color grainScreenColor { get; private set; } = new Color(1f, 1f, 1f, 2f / 255f);
+    public float cutSceneVolume { get; private set; } = 0.3f;
+    public float sceneVolume { get; private set; } = 0.1f;
+    public bool inCutScene { get; private set; } = true;
 
     private GameInput input;
     private InputAction pauseAction;
@@ -32,13 +36,7 @@ public class GameManager : MonoBehaviour
 
     private Vignette eye;
 
-    private Color grainScreenColor = new Color(1f, 1f, 1f, 2f / 255f);
-
-    public float cutSceneVolume { get; private set; } = 0.3f;
-    public float sceneVolume { get; private set; } = 0.1f;
-
-    public bool inCutScene { get; private set; } = true;
-
+    private bool started = false;
     private float quitProgress = 0f;
 
     private void Awake()
@@ -56,22 +54,21 @@ public class GameManager : MonoBehaviour
         skipAction = input.Game.Skip;
 
         volume.profile.TryGet<Vignette>(out eye);
-
-        grainScreen.color = grainScreenColor;
     }
 
     private void OnEnable()
     {
-        input.Enable();
+        input?.Enable();
     }
 
     private void OnDisable()
     {
-        input.Disable();
+        input?.Disable();
     }
 
     private void Update()
     {
+        if (!started) return;
         if (pauseAction.IsPressed()) quitProgress += Time.deltaTime / 5f;
         else quitProgress -= Time.deltaTime;
         if (quitProgress > 1) Application.Quit();
@@ -80,8 +77,8 @@ public class GameManager : MonoBehaviour
         frontScreen.color = Color.Lerp(Color.clear, Color.black, quitProgress);
     }
 
+    public void StartGame() => started = true;
     public void EnableRaycast(bool b) => frontScreen.raycastTarget = !b;
-    public void SetFrontScreen(Color c) => frontScreen.color = c;
     public void SetGameScreen(Color c) => gameScreen.color = c;
     public void SetEye(float f) => eye.intensity.value = f;
     public void SetMusic(float f) => audioMixer.SetFloat("MusicVolume", ToDb(f));
@@ -95,13 +92,16 @@ public class GameManager : MonoBehaviour
         float t = 0;
         while (t < l)
         {
-            SetMusic(Mathf.Lerp(sceneVolume, cutSceneVolume, t / l));
+            audioMixer.SetFloat("MusicVolume", ToDb(Mathf.Lerp(sceneVolume, cutSceneVolume, t / l)));
             backScreen.color = Color.Lerp(Color.clear, Color.black, t / l);
             grainScreen.color = Color.Lerp(Color.clear, grainScreenColor, t / l);
 
             t += Time.deltaTime;
             yield return null;
         }
+        audioMixer.SetFloat("MusicVolume", ToDb(cutSceneVolume));
+        backScreen.color = Color.black;
+        grainScreen.color = grainScreenColor;
     }
 
     public IEnumerator ExitCutScene(float l)
@@ -109,13 +109,16 @@ public class GameManager : MonoBehaviour
         float t = 0;
         while (t < l)
         {
-            SetMusic(Mathf.Lerp(cutSceneVolume, sceneVolume, t / l));
+            audioMixer.SetFloat("MusicVolume", ToDb(Mathf.Lerp(cutSceneVolume, sceneVolume, t / l)));
             backScreen.color = Color.Lerp(Color.black, Color.clear, t / l);
             grainScreen.color = Color.Lerp(grainScreenColor, Color.clear, t / l);
 
             t += Time.deltaTime;
             yield return null;
         }
+        audioMixer.SetFloat("MusicVolume", ToDb(sceneVolume));
+        backScreen.color = Color.clear;
+        grainScreen.color = Color.clear;
 
         inCutScene = false;
     }
