@@ -8,6 +8,8 @@ using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
+    public static GameManager instance;
+
     [Header("Sounds")]
     [SerializeField] private AudioSource rainAmbience;
     [SerializeField] private AudioSource windAmbience;
@@ -25,7 +27,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI quitPrompt;
 
     [Header("Hospital")]
-    [SerializeField] private GameObject player;
+    [SerializeField] private GameObject hospitalThings;
 
     private Vignette eye;
 
@@ -40,12 +42,14 @@ public class GameManager : MonoBehaviour
     private float sceneVolume = 0.1f;
 
     private bool started = false;
-    private bool inCutScene = true;
+    public bool inCutScene { get; private set; } = true;
 
     private float quitProgress = 0f;
 
     private void Awake()
     {
+        instance = this;
+
         volume.profile.TryGet<Vignette>(out eye);
 
         input = new GameInput();
@@ -134,6 +138,7 @@ public class GameManager : MonoBehaviour
         yield return StartCoroutine(DisplayDialogue("People die in different ways... because of different reasons."));
         yield return new WaitForSeconds(1f);
         yield return StartCoroutine(DisplayDialogue("Someone dies peacefully, without any struggle or resistance."));
+        hospitalThings.SetActive(true);
         yield return StartCoroutine(ExitCutScene());
     }
 
@@ -216,7 +221,7 @@ public class GameManager : MonoBehaviour
             yield return null;
         }
     }
-    
+
     private IEnumerator ExitCutScene()
     {
         float t = 0, l = 2f;
