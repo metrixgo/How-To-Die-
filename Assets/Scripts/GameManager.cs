@@ -16,7 +16,6 @@ public class GameManager : MonoBehaviour
     [SerializeField] private AudioSource writingEffectsPlayer;
 
     [Header("Rendering")]
-    [SerializeField] private Volume volume;
     [SerializeField] private Image gameScreen;
     [SerializeField] private Image backScreen;
     [SerializeField] private Image grainScreen;
@@ -34,8 +33,6 @@ public class GameManager : MonoBehaviour
     private InputAction pauseAction;
     private InputAction skipAction;
 
-    private Vignette eye;
-
     private bool started = false;
     private float quitProgress = 0f;
 
@@ -52,8 +49,6 @@ public class GameManager : MonoBehaviour
         input = new GameInput();
         pauseAction = input.Game.Pause;
         skipAction = input.Game.Skip;
-
-        volume.profile.TryGet<Vignette>(out eye);
     }
 
     private void OnEnable()
@@ -80,7 +75,6 @@ public class GameManager : MonoBehaviour
     public void StartGame() => started = true;
     public void EnableRaycast(bool b) => frontScreen.raycastTarget = !b;
     public void SetGameScreen(Color c) => gameScreen.color = c;
-    public void SetEye(float f) => eye.intensity.value = f;
     public void SetMusic(float f) => audioMixer.SetFloat("MusicVolume", ToDb(f));
     public void SetEffect(float f) => audioMixer.SetFloat("EffectsVolume", ToDb(f));
     private float ToDb(float f) => f <= 0.0001f ? -80f : 20f * Mathf.Log10(f);

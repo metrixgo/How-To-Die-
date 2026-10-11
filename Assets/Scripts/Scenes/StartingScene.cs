@@ -55,7 +55,6 @@ public class StartingScene : MonoBehaviour
         while (t < l)
         {
             GameManager.Instance.SetMusic(Mathf.Lerp(1f, 0f, t / l));
-            GameManager.Instance.SetEye(Mathf.Lerp(0f, 1f, t / l));
             frontScreen.color = Color.Lerp(startScreenColor, Color.black, t / l);
 
             t += Time.deltaTime;
