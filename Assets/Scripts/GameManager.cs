@@ -30,7 +30,7 @@ public class GameManager : MonoBehaviour
     private InputAction pauseAction;
     private InputAction skipAction;
 
-    private Color grainScreenColor = new Color(1f, 1f, 1f, 5f / 255f);
+    private Color grainScreenColor = new Color(1f, 1f, 1f, 2f / 255f);
     private Color startScreenColor = new Color(0f, 0f, 0f, 50f / 255f);
 
     private float cutSceneVolume = 0.3f;
