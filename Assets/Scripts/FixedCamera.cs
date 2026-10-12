@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class FixedCamera : MonoBehaviour
 {
-    [SerializeField] private float sensitivity = 10f;
+    public float sensitivity = 10f;
 
     private InputAxisControllerBase<CinemachineInputAxisController.Reader>.Controller camX;
     private InputAxisControllerBase<CinemachineInputAxisController.Reader>.Controller camY;

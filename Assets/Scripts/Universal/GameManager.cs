@@ -3,8 +3,6 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.InputSystem;
-using UnityEngine.Rendering;
-using UnityEngine.Rendering.Universal;
 using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
@@ -15,8 +13,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private AudioSource windAmbience;
     [SerializeField] private AudioSource writingEffectsPlayer;
 
-    [Header("Rendering")]
-    [SerializeField] private Image gameScreen;
+    [Header("Canvas")]
     [SerializeField] private Image backScreen;
     [SerializeField] private Image grainScreen;
     [SerializeField] private Image frontScreen;
@@ -24,8 +21,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI quitPrompt;
 
     public static GameManager Instance { get; private set; }
-    public Color grainScreenColor { get; private set; } = new Color(1f, 1f, 1f, 2f / 255f);
-    public float cutSceneVolume { get; private set; } = 0.3f;
+    public Color grainScreenColor { get; private set; } = new Color(1f, 1f, 1f, 4f / 255f);
+    public float cutSceneVolume { get; private set; } = 0.5f;
     public float sceneVolume { get; private set; } = 0.1f;
     public bool inCutScene { get; private set; } = true;
 
@@ -49,6 +46,20 @@ public class GameManager : MonoBehaviour
         input = new GameInput();
         pauseAction = input.Game.Pause;
         skipAction = input.Game.Skip;
+
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+
+        SetSceneVolume(0f);
+        SetCutsceneVolume(cutSceneVolume);
+        backScreen.color = Color.black;
+        grainScreen.color = grainScreenColor;
+    }
+
+    private void Start()
+    {
+        SetSceneVolume(0f);
+        SetCutsceneVolume(cutSceneVolume);
     }
 
     private void OnEnable()
@@ -74,9 +85,8 @@ public class GameManager : MonoBehaviour
 
     public void StartGame() => started = true;
     public void EnableRaycast(bool b) => frontScreen.raycastTarget = !b;
-    public void SetGameScreen(Color c) => gameScreen.color = c;
-    public void SetMusic(float f) => audioMixer.SetFloat("MusicVolume", ToDb(f));
-    public void SetEffect(float f) => audioMixer.SetFloat("EffectsVolume", ToDb(f));
+    public void SetSceneVolume(float f) => audioMixer.SetFloat("SceneVolume", ToDb(f));
+    public void SetCutsceneVolume(float f) => audioMixer.SetFloat("CutsceneVolume", ToDb(f));
     private float ToDb(float f) => f <= 0.0001f ? -80f : 20f * Mathf.Log10(f);
 
     public IEnumerator EnterCutScene(float l)
@@ -86,14 +96,14 @@ public class GameManager : MonoBehaviour
         float t = 0;
         while (t < l)
         {
-            audioMixer.SetFloat("MusicVolume", ToDb(Mathf.Lerp(sceneVolume, cutSceneVolume, t / l)));
+            SetSceneVolume(Mathf.Lerp(1f, 0f, t / l));
+            SetCutsceneVolume(Mathf.Lerp(sceneVolume, cutSceneVolume, t / l));
             backScreen.color = Color.Lerp(Color.clear, Color.black, t / l);
             grainScreen.color = Color.Lerp(Color.clear, grainScreenColor, t / l);
 
             t += Time.deltaTime;
             yield return null;
         }
-        audioMixer.SetFloat("MusicVolume", ToDb(cutSceneVolume));
         backScreen.color = Color.black;
         grainScreen.color = grainScreenColor;
     }
@@ -103,14 +113,16 @@ public class GameManager : MonoBehaviour
         float t = 0;
         while (t < l)
         {
-            audioMixer.SetFloat("MusicVolume", ToDb(Mathf.Lerp(cutSceneVolume, sceneVolume, t / l)));
+            SetSceneVolume(Mathf.Lerp(0f, 1f, t / l));
+            SetCutsceneVolume(Mathf.Lerp(cutSceneVolume, sceneVolume, t / l));
             backScreen.color = Color.Lerp(Color.black, Color.clear, t / l);
             grainScreen.color = Color.Lerp(grainScreenColor, Color.clear, t / l);
 
             t += Time.deltaTime;
             yield return null;
         }
-        audioMixer.SetFloat("MusicVolume", ToDb(sceneVolume));
+        SetSceneVolume(1f);
+        SetCutsceneVolume(sceneVolume);
         backScreen.color = Color.clear;
         grainScreen.color = Color.clear;
 
@@ -127,8 +139,6 @@ public class GameManager : MonoBehaviour
         int idx = 0;
         while (idx < content.Length)
         {
-            t += Time.deltaTime;
-
             if (t >= gap)
             {
                 t -= gap;
@@ -137,6 +147,7 @@ public class GameManager : MonoBehaviour
 
             if (skipAction.WasPressedThisFrame()) break;
 
+            t += Time.deltaTime;
             yield return null;
         }
         dialogue.text = content;
@@ -151,8 +162,10 @@ public class GameManager : MonoBehaviour
         while (t < l)
         {
             dialogue.color = Color.Lerp(Color.white, Color.clear, t / l);
+
             t += Time.deltaTime;
             yield return null;
         }
+        dialogue.color = Color.clear;
     }
 }

@@ -35,7 +35,7 @@ public class StartingScene : MonoBehaviour
         float t = 0f, l = 3f;
         while (t < l)
         {
-            GameManager.Instance.SetMusic(Mathf.Lerp(1f, GameManager.Instance.cutSceneVolume, t / l));
+            GameManager.Instance.SetCutsceneVolume(Mathf.Lerp(1f, GameManager.Instance.cutSceneVolume, t / l));
             frontScreen.color = Color.Lerp(startScreenColor, Color.clear, t / l);
 
             t += Time.deltaTime;
@@ -54,7 +54,7 @@ public class StartingScene : MonoBehaviour
         float t = 0f, l = 8f;
         while (t < l)
         {
-            GameManager.Instance.SetMusic(Mathf.Lerp(1f, 0f, t / l));
+            GameManager.Instance.SetCutsceneVolume(Mathf.Lerp(1f, 0f, t / l));
             frontScreen.color = Color.Lerp(startScreenColor, Color.black, t / l);
 
             t += Time.deltaTime;
