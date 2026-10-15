@@ -92,9 +92,9 @@ public class PlayerController : MonoBehaviour
 
     private Vector3 move = Vector3.zero;
 
-    private float walkSpeed = 3f;
-    private float sprintSpeed = 6f;
-    private float crouchSpeed = 1.5f;
+    [SerializeField] private float walkSpeed = 3f;
+    [SerializeField] private float sprintSpeed = 6f;
+    [SerializeField] private float crouchSpeed = 1.5f;
 
     private float curSpeed = 0f;
 
