@@ -67,7 +67,7 @@ public class HospitalScene : MonoBehaviour
         eyeCR = StartCoroutine(Eye());
         monitorCR = StartCoroutine(Monitor());
 
-        float t = 0f, l = 15f, iS = cam.sensitivity;
+        float t = 0f, l = 20f, iS = cam.sensitivity;
         while(t < l)
         {
             heartGap = Mathf.Lerp(1f, 5f, t / l);
@@ -79,7 +79,7 @@ public class HospitalScene : MonoBehaviour
 
         StopCoroutine(eyeCR);
 
-        t = 0f; l = 15f; float iI = eye.intensity.value; bool flg = false;
+        t = 0f; l = 14f; float iI = eye.intensity.value; bool flg = false;
         while (t < l)
         {
             eye.intensity.value = Mathf.Lerp(iI, 1f, t / l);

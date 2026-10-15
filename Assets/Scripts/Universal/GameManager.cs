@@ -21,10 +21,10 @@ public class GameManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI quitPrompt;
 
     public static GameManager Instance { get; private set; }
-    public Color grainScreenColor { get; private set; } = new Color(1f, 1f, 1f, 4f / 255f);
-    public float cutSceneVolume { get; private set; } = 0.5f;
-    public float sceneVolume { get; private set; } = 0.1f;
-    public bool inCutScene { get; private set; } = true;
+    public Color GrainScreenColor { get; private set; } = new Color(1f, 1f, 1f, 4f / 255f);
+    public float CutSceneVolume { get; private set; } = 0.5f;
+    public float SceneVolume { get; private set; } = 0.1f;
+    public bool InCutScene { get; private set; } = true;
 
     private GameInput input;
     private InputAction pauseAction;
@@ -51,15 +51,15 @@ public class GameManager : MonoBehaviour
         Cursor.visible = false;
 
         SetSceneVolume(0f);
-        SetCutsceneVolume(cutSceneVolume);
+        SetCutsceneVolume(CutSceneVolume);
         backScreen.color = Color.black;
-        grainScreen.color = grainScreenColor;
+        grainScreen.color = GrainScreenColor;
     }
 
     private void Start()
     {
         SetSceneVolume(0f);
-        SetCutsceneVolume(cutSceneVolume);
+        SetCutsceneVolume(CutSceneVolume);
     }
 
     private void OnEnable()
@@ -91,42 +91,40 @@ public class GameManager : MonoBehaviour
 
     public IEnumerator EnterCutScene(float l)
     {
-        inCutScene = true;
-
         float t = 0;
         while (t < l)
         {
             SetSceneVolume(Mathf.Lerp(1f, 0f, t / l));
-            SetCutsceneVolume(Mathf.Lerp(sceneVolume, cutSceneVolume, t / l));
+            SetCutsceneVolume(Mathf.Lerp(SceneVolume, CutSceneVolume, t / l));
             backScreen.color = Color.Lerp(Color.clear, Color.black, t / l);
-            grainScreen.color = Color.Lerp(Color.clear, grainScreenColor, t / l);
+            grainScreen.color = Color.Lerp(Color.clear, GrainScreenColor, t / l);
 
             t += Time.deltaTime;
             yield return null;
         }
         backScreen.color = Color.black;
-        grainScreen.color = grainScreenColor;
+        grainScreen.color = GrainScreenColor;
+        InCutScene = true;
     }
 
     public IEnumerator ExitCutScene(float l)
     {
+        InCutScene = false;
         float t = 0;
         while (t < l)
         {
             SetSceneVolume(Mathf.Lerp(0f, 1f, t / l));
-            SetCutsceneVolume(Mathf.Lerp(cutSceneVolume, sceneVolume, t / l));
+            SetCutsceneVolume(Mathf.Lerp(CutSceneVolume, SceneVolume, t / l));
             backScreen.color = Color.Lerp(Color.black, Color.clear, t / l);
-            grainScreen.color = Color.Lerp(grainScreenColor, Color.clear, t / l);
+            grainScreen.color = Color.Lerp(GrainScreenColor, Color.clear, t / l);
 
             t += Time.deltaTime;
             yield return null;
         }
         SetSceneVolume(1f);
-        SetCutsceneVolume(sceneVolume);
+        SetCutsceneVolume(SceneVolume);
         backScreen.color = Color.clear;
         grainScreen.color = Color.clear;
-
-        inCutScene = false;
     }
 
     public IEnumerator DisplayDialogue(string content)

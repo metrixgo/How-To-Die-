@@ -36,6 +36,7 @@ public class SurfaceSound
     public AudioClip[] SprintSounds;
 }
 
+[System.Serializable]
 public class PlayerCanDo
 {
     public bool Look = true;
@@ -170,20 +171,13 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        if (MainManager.Instance.IsPaused) return;
+        UpdateSensitivity();
+
+        if (GameManager.Instance.InCutScene) return;
 
         GetInput();
         UpdateState();
-        UpdateSensitivity();
         CameraBobbing();
-
-        if (MainManager.Instance.PlayerBlockLayers > 0)
-        {
-            if (curItem != null) curItem.SetFocused(false);
-            newItem = null;
-            curItem = null;
-            return;
-        }
 
         HandleMove();
         HandleJump();
@@ -206,7 +200,7 @@ public class PlayerController : MonoBehaviour
 
     private void UpdateState()
     {
-        if (moveInput.magnitude > 0.01f && CanDo.Move && MainManager.Instance.PlayerBlockLayers == 0)
+        if (moveInput.magnitude > 0.01f && CanDo.Move)
         {
             if (isCrouched) state = PlayerState.CrouchWalk;
             else if (sprintInput && CanDo.Sprint) state = PlayerState.Sprint;
@@ -221,7 +215,7 @@ public class PlayerController : MonoBehaviour
 
     private void UpdateSensitivity()
     {
-        sensitivity = (CanDo.Look && MainManager.Instance.PlayerBlockLayers == 0) ? MainManager.Instance.Data.sensitivity : 0;
+        sensitivity = (CanDo.Look && !GameManager.Instance.InCutScene) ? 10f : 0;
         camX.Input.Gain = sensitivity;
         camY.Input.Gain = -sensitivity;
     }
@@ -230,7 +224,7 @@ public class PlayerController : MonoBehaviour
     {
         camBobbingT += Time.deltaTime;
 
-        int curState = (controller.isGrounded && MainManager.Instance.PlayerBlockLayers == 0) ? (int)state : (int)PlayerState.Idle;
+        int curState = (controller.isGrounded) ? (int)state : (int)PlayerState.Idle;
 
         float bobAmplitude = bobAmplitudes[curState];
         float bobFrequency = bobFrequencies[curState];
@@ -331,7 +325,6 @@ public class PlayerController : MonoBehaviour
     private void HandleInteractions()
     {
         if (CanDo.Interact &&
-            !MainManager.Instance.IsExecutingTriggers &&
             Physics.Raycast(playerCam.position, playerCam.forward, out RaycastHit hit, reachRange, ~ignoreLayer))
         {
             newItem = hit.collider.GetComponentInParent<Interactable>();
