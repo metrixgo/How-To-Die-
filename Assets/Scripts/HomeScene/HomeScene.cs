@@ -17,11 +17,12 @@ public class HomeScene : MonoBehaviour
     private Vignette v;
 
     [Header("Sounds")]
-    [SerializeField] private AudioClip tinnitus;
-    [SerializeField] private AudioClip heartbeat;
+    [SerializeField] private AudioReverbZone arz;
     [SerializeField] private AudioSource tinnitusAd;
     [SerializeField] private AudioSource heartbeatAd;
     [SerializeField] private AudioSource clockAd;
+    [SerializeField] private AudioClip tinnitus;
+    [SerializeField] private AudioClip heartbeat;
 
     private Coroutine eyeCR;
 
@@ -46,13 +47,9 @@ public class HomeScene : MonoBehaviour
         heartbeatAd.clip = heartbeat;
         tinnitusAd.volume = 0.8f;
         heartbeatAd.Play();
-        dof.gaussianStart.value = 1f;
-        dof.gaussianEnd.value = 2f;
-        v.intensity.value = 0.3f;
+        eyeCR = StartCoroutine(Eye());
 
         yield return new WaitForSeconds(7.5f);
-
-        eyeCR = StartCoroutine(Eye());
 
         float t = 0f, l = 4f;
         while (t < l)
@@ -82,7 +79,7 @@ public class HomeScene : MonoBehaviour
             couchCam.sensitivity = Mathf.Lerp(1f, 0.1f, t / l);
             v.intensity.value = Mathf.Lerp(iV, 1f, t / l);
             dof.gaussianStart.value = Mathf.Lerp(iD, 0f, t / l);
-            dof.gaussianEnd.value = Mathf.Lerp(iD, 0f, t / l) * 2f;
+            dof.gaussianEnd.value = Mathf.Lerp(iD, 0f, t / l) * 5f;
             screen.color = Color.Lerp(Color.clear, Color.black, t / l);
 
             t += Time.deltaTime;
@@ -101,7 +98,7 @@ public class HomeScene : MonoBehaviour
         while (true)
         {
             dof.gaussianStart.value = Mathf.Sin(t * 2f * Mathf.PI / 4f);
-            dof.gaussianEnd.value = Mathf.Sin(t * 2f * Mathf.PI / 4f) * 2f;
+            dof.gaussianEnd.value = Mathf.Sin(t * 2f * Mathf.PI / 4f) * 5f;
             v.intensity.value = Mathf.Sin(t * 2f * Mathf.PI / 8f) / 10f + 0.3f;
 
             t += Time.deltaTime;
