@@ -2,15 +2,5 @@ using UnityEngine;
 
 public class DriveScene : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    private Vector3 offset = new Vector3(-284.201233f, -1.17336345f, -5.17994452f);
 }
