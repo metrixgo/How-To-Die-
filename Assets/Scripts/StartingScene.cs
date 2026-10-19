@@ -42,7 +42,6 @@ public class StartingScene : MonoBehaviour
             yield return null;
         }
 
-        GameManager.Instance.StartGame();
         SceneManager.LoadScene("HospitalScene");
     }
 

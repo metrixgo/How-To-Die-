@@ -3,6 +3,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
@@ -30,7 +31,6 @@ public class GameManager : MonoBehaviour
     private InputAction pauseAction;
     private InputAction skipAction;
 
-    private bool started = false;
     private float quitProgress = 0f;
 
     private void Awake()
@@ -74,7 +74,7 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-        if (!started) return;
+        if (SceneManager.GetActiveScene().name == "StartingScene") return;
         if (pauseAction.IsPressed()) quitProgress += Time.deltaTime / 5f;
         else quitProgress -= Time.deltaTime;
         if (quitProgress > 1) Application.Quit();
@@ -83,7 +83,6 @@ public class GameManager : MonoBehaviour
         frontScreen.color = Color.Lerp(Color.clear, Color.black, quitProgress);
     }
 
-    public void StartGame() => started = true;
     public void EnableRaycast(bool b) => frontScreen.raycastTarget = !b;
     public void SetSceneVolume(float f) => audioMixer.SetFloat("SceneVolume", ToDb(f));
     public void SetCutsceneVolume(float f) => audioMixer.SetFloat("CutsceneVolume", ToDb(f));

@@ -16,9 +16,9 @@ public class HomeClock : MonoBehaviour
     private void Start()
     {
         ad = GetComponent<AudioSource>();
-        secHand.rotation = Quaternion.Euler(secHand.rotation.x, secHand.rotation.y, seconds % 60 * 6);
-        minHand.rotation = Quaternion.Euler(minHand.rotation.x, minHand.rotation.y, seconds / 60 * 6);
-        hourHand.rotation = Quaternion.Euler(hourHand.rotation.x, hourHand.rotation.y, seconds / 3600 * 30);
+        secHand.rotation = Quaternion.Euler(secHand.eulerAngles.x, secHand.eulerAngles.y, seconds % 60 * 6);
+        minHand.rotation = Quaternion.Euler(minHand.eulerAngles.x, minHand.eulerAngles.y, seconds / 60 * 6);
+        hourHand.rotation = Quaternion.Euler(hourHand.eulerAngles.x, hourHand.eulerAngles.y, seconds / 3600 * 30);
     }
 
     private void Update()
@@ -32,9 +32,9 @@ public class HomeClock : MonoBehaviour
             ad.Play();
             isTick = !isTick;
             seconds++;
-            secHand.rotation = Quaternion.Euler(secHand.rotation.x, secHand.rotation.y, seconds % 60 * 6);
-            minHand.rotation = Quaternion.Euler(minHand.rotation.x, minHand.rotation.y, seconds / 60 * 6);
-            hourHand.rotation = Quaternion.Euler(hourHand.rotation.x, hourHand.rotation.y, seconds / 720 * 6);
+            secHand.rotation = Quaternion.Euler(secHand.eulerAngles.x, secHand.eulerAngles.y, seconds % 60 * 6);
+            minHand.rotation = Quaternion.Euler(minHand.eulerAngles.x, minHand.eulerAngles.y, seconds / 60 * 6);
+            hourHand.rotation = Quaternion.Euler(hourHand.eulerAngles.x, hourHand.eulerAngles.y, seconds / 720 * 6);
         }
     }
 }

@@ -92,7 +92,7 @@ public class HomeScene : MonoBehaviour
         startingCam.SetActive(false);
         couchCam.gameObject.SetActive(true);
 
-        yield return new WaitForSeconds(10f);
+        yield return new WaitForSeconds(8f);
 
         StopCoroutine(eyeCR);
 
@@ -105,7 +105,7 @@ public class HomeScene : MonoBehaviour
             heartbeatAd.volume = Mathf.Lerp(0.4f, 0.05f, t / l);
             clockAd.spatialBlend = Mathf.Lerp(1f, 0f, t / l);
             clockAd.volume = Mathf.Lerp(0.5f, 1f, t / l);
-            waterAd.volume = fireAd.volume = smokeAd.volume = Mathf.Lerp(0.5f, 0f, t / l);
+            waterAd.volume = fireAd.volume = smokeAd.volume = Mathf.Lerp(0.5f, 0.2f, t / l);
             couchCam.sensitivity = Mathf.Lerp(1f, 0.1f, t / l);
             v.intensity.value = Mathf.Lerp(iV, 1f, t / l);
             dof.gaussianStart.value = Mathf.Lerp(iD, 0f, t / l);
@@ -121,7 +121,8 @@ public class HomeScene : MonoBehaviour
         screen.color = Color.black;
         clockAd.spatialBlend = 0f;
 
-        yield return new WaitForSeconds(6f);
+        yield return new WaitForSeconds(4f);
+        clockAd.gameObject.SetActive(false);
         yield return StartCoroutine(GameManager.Instance.EnterCutScene(2f));
         SceneManager.LoadScene("DriveScene");
     }
