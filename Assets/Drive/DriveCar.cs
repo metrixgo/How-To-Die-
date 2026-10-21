@@ -18,18 +18,29 @@ public class DriveCar : MonoBehaviour
     {
         input = new GameInput();
         driveAction = input.Player.Move;
+    }
 
-        curAngle = transform.eulerAngles.y;
+    private void OnEnable()
+    {
+        input.Enable();
+    }
+
+    private void OnDisable()
+    {
+        input.Disable();
     }
 
     private void Update()
     {
         drive = driveAction.ReadValue<Vector2>();
 
-        curAngle = Mathf.Clamp(curAngle + drive.x * Time.deltaTime, -20f, 20f);
-        curVelocity = Mathf.Clamp(curVelocity + (drive.y - 0.5f) * Time.deltaTime, 0f, 40f);
+        curAngle = Mathf.Clamp(curAngle + drive.x * Time.deltaTime * 80f, -40f, 40f);
+        if (Mathf.Abs(drive.x) < 0.01f) curAngle = 0f;
+        curVelocity = Mathf.Clamp(curVelocity + (drive.y - 0.1f) * Time.deltaTime / 70f, 0f, 0.1f);
 
-        transform.rotation = Quaternion.Euler(0f, curAngle, 0f);
+        transform.Rotate(transform.up * curAngle * Time.deltaTime);
         transform.position += transform.forward * curVelocity;
+
+        acc.volume = curVelocity / 0.1f;
     }
 }
