@@ -1,4 +1,3 @@
-using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Splines;
@@ -48,7 +47,7 @@ public class DriveCar : MonoBehaviour
         curSpeed += drive.y * acce * Time.deltaTime;
         curSpeed -= frict * Time.deltaTime;
         curSpeed = Mathf.Clamp(curSpeed, 0f, maxs);
-        acc.volume = curSpeed / maxs;
+        acc.volume = Mathf.Abs(drive.y) > 0.01f ? curSpeed / maxs : 0f;
 
         curPos += curSpeed / 100f;
         curPos %= 1f;

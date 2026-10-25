@@ -24,7 +24,7 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance { get; private set; }
     public Color GrainScreenColor { get; private set; } = new Color(1f, 1f, 1f, 4f / 255f);
     public float CutSceneVolume { get; private set; } = 0.5f;
-    public float SceneVolume { get; private set; } = 0.1f;
+    public float SceneVolume { get; private set; } = 0.05f;
     public bool InCutScene { get; private set; } = true;
 
     private GameInput input;
