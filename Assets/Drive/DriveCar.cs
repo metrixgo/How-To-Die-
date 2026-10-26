@@ -63,17 +63,18 @@ public class DriveCar : MonoBehaviour
         if (GameManager.Instance.InCutScene) return;
 
         drive = driveAction.ReadValue<Vector2>();
+        if (fuel.localEulerAngles.y > fuelAng) drive.y = Mathf.Min(drive.y, 0f);
         float prevSpeed = curSpeed;
-        curSpeed += fuel.localEulerAngles.y > fuelAng && drive.y > 0.01f ? 0f : drive.y * acce * Time.deltaTime;
+        curSpeed += drive.y * acce * Time.deltaTime;
         curSpeed -= frict * Time.deltaTime;
         curSpeed = Mathf.Clamp(curSpeed, 0f, maxs);
         acc.volume = drive.y > 0.01f ? curSpeed / maxs : 0f;
-        breaks.volume = drive.y < -0.01f && curSpeed > 0.01f ? 1f : 0f;
+        breaks.volume = drive.y < -0.01f && curSpeed > 0.01f ? 0.05f : 0f;
 
-        float deltaSpeed = curSpeed - prevSpeed;
+        float deltaSpeed = (curSpeed - prevSpeed) / Time.deltaTime / acce;
         float curZ = cam.localPosition.z;
-        if (deltaSpeed > 0.01f) curZ = Mathf.Lerp(curZ, 0f, Time.deltaTime * 3f);
-        else if (deltaSpeed < -0.01f) curZ = Mathf.Lerp(curZ, 0.1f, Time.deltaTime * 3f);
+        if (deltaSpeed > 0.01f) curZ = Mathf.Lerp(curZ, 0.04f, Time.deltaTime * 3f);
+        else if (deltaSpeed < -0.01f && drive.y < -0.01f) curZ = Mathf.Lerp(curZ, 0.06f, Time.deltaTime * 3f);
         else curZ = Mathf.Lerp(curZ, 0.05f, Time.deltaTime * 3f);
 
         cam.localPosition = new Vector3(cam.localPosition.x, cam.localPosition.y, curZ);
@@ -83,12 +84,12 @@ public class DriveCar : MonoBehaviour
 
         sa.NormalizedTime = curPos;
 
-        float deltaAng = transform.eulerAngles.y - prevAng;
+        float deltaAng = Mathf.DeltaAngle(prevAng, transform.eulerAngles.y);
         prevAng = transform.eulerAngles.y;
-        Vector3 goalAng = new Vector3(handle.localEulerAngles.x, handle.localEulerAngles.y, -180f - deltaAng / Time.deltaTime);
-        handle.localEulerAngles = Vector3.Lerp(handle.localEulerAngles, goalAng, Time.deltaTime * 5f);
+        Quaternion goalAng = Quaternion.Euler(handle.localEulerAngles.x, handle.localEulerAngles.y, -180f - deltaAng / Time.deltaTime);
+        handle.localRotation = Quaternion.Slerp(handle.localRotation, goalAng, Time.deltaTime * 3f);
 
-        float deltaFuel = curSpeed + 0.1f;
+        float deltaFuel = 0.1f + Mathf.Max(drive.y, 0f) * 0.15f;
         fuel.Rotate(Vector3.up * deltaFuel * Time.deltaTime);
         spin.localEulerAngles = Vector3.Lerp(Vector3.zero, Vector3.up * spinAng, curSpeed / maxs);
         kph.localEulerAngles = Vector3.Lerp(Vector3.zero, Vector3.up * kphAng, curSpeed / maxs);
