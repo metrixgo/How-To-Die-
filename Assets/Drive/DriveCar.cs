@@ -1,13 +1,12 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Splines;
-using UnityEngine.Windows.WebCam;
 
 public class DriveCar : MonoBehaviour
 {
-    public float acce = 5f;
-    public float frict = 0.2f;
-    public float maxs = 20f;
+    public float acce = 0.02f;
+    public float frict = 0.006f;
+    public float maxs = 0.16f;
 
     [Header("Sounds")]
     [SerializeField] private AudioSource idle;
@@ -21,6 +20,7 @@ public class DriveCar : MonoBehaviour
     [SerializeField] private Transform kph;
     [SerializeField] private Transform heat;
     [SerializeField] private Transform cam;
+    [SerializeField] private GameObject fuelLight;
 
     private float fuelAng = 30f;
     private float spinAng = -100f;
@@ -63,9 +63,15 @@ public class DriveCar : MonoBehaviour
         if (GameManager.Instance.InCutScene) return;
 
         drive = driveAction.ReadValue<Vector2>();
-        if (fuel.localEulerAngles.y > fuelAng) drive.y = Mathf.Min(drive.y, 0f);
+        if (fuel.localEulerAngles.y > fuelAng)
+        {
+            drive.y = Mathf.Min(drive.y, 0f);
+            idle.volume = 0.1f;
+        }
+
         float prevSpeed = curSpeed;
-        curSpeed += drive.y * acce * Time.deltaTime;
+        if (drive.y > 0.01f) curSpeed += drive.y * acce * Time.deltaTime;
+        else curSpeed -= drive.y * acce * 2.5f * Time.deltaTime;
         curSpeed -= frict * Time.deltaTime;
         curSpeed = Mathf.Clamp(curSpeed, 0f, maxs);
         acc.volume = drive.y > 0.01f ? curSpeed / maxs : 0f;
@@ -80,6 +86,7 @@ public class DriveCar : MonoBehaviour
         cam.localPosition = new Vector3(cam.localPosition.x, cam.localPosition.y, curZ);
 
         curPos += curSpeed * Time.deltaTime;
+
         curPos %= 1f;
 
         sa.NormalizedTime = curPos;
@@ -87,10 +94,11 @@ public class DriveCar : MonoBehaviour
         float deltaAng = Mathf.DeltaAngle(prevAng, transform.eulerAngles.y);
         prevAng = transform.eulerAngles.y;
         Quaternion goalAng = Quaternion.Euler(handle.localEulerAngles.x, handle.localEulerAngles.y, -180f - deltaAng / Time.deltaTime);
-        handle.localRotation = Quaternion.Slerp(handle.localRotation, goalAng, Time.deltaTime * 3f);
+        handle.localRotation = Quaternion.Slerp(handle.localRotation, goalAng, Time.deltaTime);
 
-        float deltaFuel = 0.1f + Mathf.Max(drive.y, 0f) * 0.15f;
+        float deltaFuel = 0.1f + Mathf.Max(drive.y, 0f) * 0.3f;
         fuel.Rotate(Vector3.up * deltaFuel * Time.deltaTime);
+        if (fuel.localEulerAngles.y > fuelAng * 0.8f && !fuelLight.activeSelf) fuelLight.SetActive(true);
         spin.localEulerAngles = Vector3.Lerp(Vector3.zero, Vector3.up * spinAng, curSpeed / maxs);
         kph.localEulerAngles = Vector3.Lerp(Vector3.zero, Vector3.up * kphAng, curSpeed / maxs);
         heat.localEulerAngles = Vector3.Lerp(Vector3.zero, Vector3.up * heatAng, curSpeed / maxs);
