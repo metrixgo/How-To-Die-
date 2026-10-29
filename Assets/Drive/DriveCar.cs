@@ -1,3 +1,6 @@
+using System.Collections;
+using TMPro;
+using UnityEditor.iOS.Xcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Splines;
@@ -12,6 +15,7 @@ public class DriveCar : MonoBehaviour
     [SerializeField] private AudioSource idle;
     [SerializeField] private AudioSource acc;
     [SerializeField] private AudioSource breaks;
+    [SerializeField] private AudioSource writingEffectsPlayer;
 
     [Header("Car")]
     [SerializeField] private Transform handle;
@@ -22,6 +26,10 @@ public class DriveCar : MonoBehaviour
     [SerializeField] private Transform cam;
     [SerializeField] private GameObject fuelLight;
 
+    [Header("Dialogue")]
+    [SerializeField] private GameObject dScreen;
+    [SerializeField] private TextMeshProUGUI dContent;
+
     private float fuelAng = 30f;
     private float spinAng = -100f;
     private float kphAng = -160f;
@@ -31,6 +39,7 @@ public class DriveCar : MonoBehaviour
 
     private GameInput input;
     private InputAction driveAction;
+    private InputAction skipAction;
     private Vector2 drive;
 
     private float curSpeed = 0f;
@@ -38,12 +47,16 @@ public class DriveCar : MonoBehaviour
 
     private float prevAng;
 
+    private bool stopped = false;
+    public bool pickedUpPhone = false;
+
     private void Awake()
     {
         sa = GetComponent<SplineAnimate>();
 
         input = new GameInput();
         driveAction = input.Player.Move;
+        driveAction = input.Game.Skip;
 
         prevAng = transform.eulerAngles.y;
     }
@@ -66,7 +79,12 @@ public class DriveCar : MonoBehaviour
         if (fuel.localEulerAngles.y > fuelAng)
         {
             drive.y = Mathf.Min(drive.y, 0f);
-            idle.volume = 0.1f;
+            idle.volume = 0.2f;
+            if (!stopped)
+            {
+                stopped = true;
+                StartCoroutine(EnterDeath());
+            }
         }
 
         float prevSpeed = curSpeed;
@@ -96,11 +114,50 @@ public class DriveCar : MonoBehaviour
         Quaternion goalAng = Quaternion.Euler(handle.localEulerAngles.x, handle.localEulerAngles.y, -180f - deltaAng / Time.deltaTime);
         handle.localRotation = Quaternion.Slerp(handle.localRotation, goalAng, Time.deltaTime);
 
-        float deltaFuel = 0.1f + Mathf.Max(drive.y, 0f) * 0.3f;
+        float deltaFuel = 0.1f + Mathf.Max(drive.y, 0f) * 10.2f;
         fuel.Rotate(Vector3.up * deltaFuel * Time.deltaTime);
         if (fuel.localEulerAngles.y > fuelAng * 0.8f && !fuelLight.activeSelf) fuelLight.SetActive(true);
         spin.localEulerAngles = Vector3.Lerp(Vector3.zero, Vector3.up * spinAng, curSpeed / maxs);
         kph.localEulerAngles = Vector3.Lerp(Vector3.zero, Vector3.up * kphAng, curSpeed / maxs);
         heat.localEulerAngles = Vector3.Lerp(Vector3.zero, Vector3.up * heatAng, curSpeed / maxs);
+    }
+
+    private IEnumerator EnterDeath()
+    {
+        dScreen.SetActive(true);
+        yield return StartCoroutine(DisplayDialogue("What?"));
+        yield return StartCoroutine(DisplayDialogue("My car is dead..."));
+        yield return StartCoroutine(DisplayDialogue("I need to go get my phone. I think I left it in my back trunk."));
+        dScreen.SetActive(false);
+        yield return new WaitUntil(() => pickedUpPhone);
+    }
+
+    private IEnumerator DisplayDialogue(string content)
+    {
+        writingEffectsPlayer.Play();
+
+        float t = 0f, gap = 0.04f;
+        int idx = 0;
+        while (idx < content.Length)
+        {
+            t += Time.deltaTime;
+            if (t >= gap)
+            {
+                t -= gap;
+                dContent.text += content[idx++];
+            }
+            if (skipAction.WasPressedThisFrame())
+            {
+                dContent.text = content;
+                break;
+            }
+            yield return null;
+        }
+
+        writingEffectsPlayer.Stop();
+        dContent.text = content;
+
+        yield return new WaitForSeconds(0.05f);
+        yield return new WaitUntil(() => skipAction.WasPressedThisFrame());
     }
 }
