@@ -1,8 +1,10 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 
 public class Interactable : MonoBehaviour
 {
+    [SerializeField] private TextMeshProUGUI pt;   
     [SerializeField] private string prompt;
     [SerializeField] private UnityEvent onInteraction;
 
@@ -23,7 +25,7 @@ public class Interactable : MonoBehaviour
     public void SetFocused(bool b)
     {
         if (outline != null) outline.enabled = b;
-        if (b) MainManager.Instance.SetPrompt(prompt, Color.white, false, false);
-        else MainManager.Instance.SetPrompt("", Color.white, false, false);
+        if (b) pt.text = prompt;
+        else pt.text = "";
     }
 }

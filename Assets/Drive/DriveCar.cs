@@ -1,6 +1,5 @@
 using System.Collections;
 using TMPro;
-using UnityEditor.iOS.Xcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Splines;
@@ -29,6 +28,7 @@ public class DriveCar : MonoBehaviour
     [Header("Dialogue")]
     [SerializeField] private GameObject dScreen;
     [SerializeField] private TextMeshProUGUI dContent;
+    [SerializeField] private GameObject focus;
 
     private float fuelAng = 30f;
     private float spinAng = -100f;
@@ -47,7 +47,7 @@ public class DriveCar : MonoBehaviour
 
     private float prevAng;
 
-    private bool stopped = false;
+    public bool stopped = false;
     public bool pickedUpPhone = false;
 
     private void Awake()
@@ -73,16 +73,17 @@ public class DriveCar : MonoBehaviour
 
     private void Update()
     {
-        if (GameManager.Instance.InCutScene) return;
+        if (GameManager.Instance.InCutScene || stopped) return;
 
         drive = driveAction.ReadValue<Vector2>();
         if (fuel.localEulerAngles.y > fuelAng)
         {
             drive.y = Mathf.Min(drive.y, 0f);
             idle.volume = 0.2f;
-            if (!stopped)
+            if (Mathf.Abs(curSpeed) < 0.001f && !stopped)
             {
                 stopped = true;
+                focus.SetActive(true);
                 StartCoroutine(EnterDeath());
             }
         }

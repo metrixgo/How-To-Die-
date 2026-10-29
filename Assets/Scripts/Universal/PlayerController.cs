@@ -51,11 +51,9 @@ public class PlayerController : MonoBehaviour
 {
     [Header("Player")]
     [SerializeField] private Transform playerCam;
-    [SerializeField] private Transform playerHold;
     [SerializeField] private Transform playerBody;
 
     [Header("Layers")]
-    [SerializeField] private LayerMask physicalLayer;
     [SerializeField] private LayerMask ignoreLayer;
 
     [Header("Footstep Sounds")]
@@ -76,7 +74,6 @@ public class PlayerController : MonoBehaviour
 
     private GameInput input;
 
-    private InputAction lookAction;
     private InputAction moveAction;
     private InputAction sprintAction;
     private InputAction jumpAction;
@@ -84,7 +81,6 @@ public class PlayerController : MonoBehaviour
     private InputAction interactAction;
 
     private Vector2 moveInput = Vector2.zero;
-    private Vector2 lookInput = Vector2.zero;
     private bool sprintInput = false;
     private bool jumpInput = false;
     private bool crouchInput = false;
@@ -109,7 +105,7 @@ public class PlayerController : MonoBehaviour
     private float gravity = -12f;
     private float groundGravity = -2f;
 
-    private float reachRange = 1.5f;
+    public float reachRange = 1.5f;
     private float sensitivity = 5f;
 
     public PlayerCanDo CanDo = new PlayerCanDo();
@@ -121,17 +117,12 @@ public class PlayerController : MonoBehaviour
     private PlayerState state = PlayerState.Idle;
 
     private float stepT = 0f;
-    private float camBobbingT = 0f;
-    private Vector3 playerHoldPosition = new Vector3(0.15f, -0.1f, 0.2f);
 
     float[] bobAmplitudes = { 0.08f, 0.15f, 0.3f, 0.05f, 0.12f };
     float[] bobFrequencies = { 0.08f, 0.15f, 0.3f, 0.05f, 0.12f };
     float curBobAmplitude = 0.08f;
     float curBobFrequency = 0.08f;
-    float[] bobSteps = { 0.002f, 0.004f, 0.01f, 0.002f, 0.003f };
     float[] bobSpeeds = { 0.6f, 4f, 8f, 0.6f, 3f };
-    float swayStep = 0.02f;
-    float maxSwayStep = 0.15f;
 
     float transitionSpeed = 7f;
 
@@ -151,7 +142,6 @@ public class PlayerController : MonoBehaviour
         }
 
         input = new GameInput();
-        lookAction = input.Player.Look;
         moveAction = input.Player.Move;
         sprintAction = input.Player.Sprint;
         jumpAction = input.Player.Jump;
@@ -191,7 +181,6 @@ public class PlayerController : MonoBehaviour
     private void GetInput()
     {
         moveInput = moveAction.ReadValue<Vector2>();
-        lookInput = lookAction.ReadValue<Vector2>();
         sprintInput = sprintAction.IsPressed();
         jumpInput = jumpAction.IsPressed();
         crouchInput = crouchAction.IsPressed();
@@ -222,8 +211,6 @@ public class PlayerController : MonoBehaviour
 
     private void CameraBobbing()
     {
-        camBobbingT += Time.deltaTime;
-
         int curState = (controller.isGrounded) ? (int)state : (int)PlayerState.Idle;
 
         float bobAmplitude = bobAmplitudes[curState];
@@ -234,19 +221,6 @@ public class PlayerController : MonoBehaviour
 
         camBob.AmplitudeGain = curBobAmplitude;
         camBob.FrequencyGain = curBobFrequency;
-
-        float bobStep = bobSteps[curState];
-        float bobSpeed = bobSpeeds[curState];
-
-        Vector3 offset = Vector3.zero;
-
-        offset.x = (Mathf.Cos(camBobbingT * bobSpeed) * bobStep);
-        offset.y = (Mathf.Sin(camBobbingT * 2f * bobSpeed) * bobStep);
-
-        offset.x += Mathf.Clamp(-swayStep * lookInput.x * sensitivity / 1000f, -maxSwayStep, maxSwayStep);
-        offset.y += Mathf.Clamp(-swayStep * lookInput.y * sensitivity / 1000f, -maxSwayStep, maxSwayStep);
-
-        playerHold.localPosition = Vector3.Lerp(playerHold.localPosition, playerHoldPosition + offset, Time.deltaTime * transitionSpeed);
     }
 
     private void HandleMove()
@@ -260,22 +234,6 @@ public class PlayerController : MonoBehaviour
             Vector3 camRight = yRot * Vector3.right;
 
             move = (camRight * moveInput.x + camForward * moveInput.y).normalized * curSpeed;
-
-            if (move.magnitude > 0.01f &&
-                Physics.SphereCast(
-                    transform.position + Vector3.up * (controller.height - controller.radius),
-                    controller.radius,
-                    move.normalized,
-                    out RaycastHit hit,
-                    controller.skinWidth + controller.radius * 0.1f,
-                    physicalLayer
-                ) &&
-                hit.normal.y < -0.01f &&
-                hit.normal.y > -0.99f)
-            {
-                Vector3 slideDirection = Vector3.Cross(Vector3.up, hit.normal).normalized;
-                move = slideDirection * Vector3.Dot(move, slideDirection);
-            }
         }
         else
         {
@@ -298,7 +256,7 @@ public class PlayerController : MonoBehaviour
                     transform.position + Vector3.up * controller.radius,
                     transform.position + Vector3.up * (standHeight - controller.radius),
                     controller.radius,
-                    physicalLayer
+                    ~ignoreLayer
                 );
 
         if (hasCeiling && isCrouched && !crouchInput)
