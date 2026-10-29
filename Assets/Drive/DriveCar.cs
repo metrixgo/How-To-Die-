@@ -56,7 +56,7 @@ public class DriveCar : MonoBehaviour
 
         input = new GameInput();
         driveAction = input.Player.Move;
-        driveAction = input.Game.Skip;
+        skipAction = input.Game.Skip;
 
         prevAng = transform.eulerAngles.y;
     }
@@ -83,14 +83,13 @@ public class DriveCar : MonoBehaviour
             if (Mathf.Abs(curSpeed) < 0.001f && !stopped)
             {
                 stopped = true;
-                focus.SetActive(true);
                 StartCoroutine(EnterDeath());
             }
         }
 
         float prevSpeed = curSpeed;
         if (drive.y > 0.01f) curSpeed += drive.y * acce * Time.deltaTime;
-        else curSpeed -= drive.y * acce * 2.5f * Time.deltaTime;
+        else curSpeed += drive.y * acce * 2.5f * Time.deltaTime;
         curSpeed -= frict * Time.deltaTime;
         curSpeed = Mathf.Clamp(curSpeed, 0f, maxs);
         acc.volume = drive.y > 0.01f ? curSpeed / maxs : 0f;
@@ -125,20 +124,25 @@ public class DriveCar : MonoBehaviour
 
     private IEnumerator EnterDeath()
     {
+        yield return new WaitForSeconds(4f);
         dScreen.SetActive(true);
         yield return StartCoroutine(DisplayDialogue("What?"));
         yield return StartCoroutine(DisplayDialogue("My car is dead..."));
         yield return StartCoroutine(DisplayDialogue("I need to go get my phone. I think I left it in my back trunk."));
+        focus.SetActive(true);
         dScreen.SetActive(false);
         yield return new WaitUntil(() => pickedUpPhone);
     }
 
     private IEnumerator DisplayDialogue(string content)
     {
+        yield return new WaitForSeconds(0.05f);
         writingEffectsPlayer.Play();
 
-        float t = 0f, gap = 0.04f;
+        float t = 0f, gap = 0.05f;
         int idx = 0;
+
+        dContent.text = "";
         while (idx < content.Length)
         {
             t += Time.deltaTime;

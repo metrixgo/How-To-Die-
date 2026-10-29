@@ -3,6 +3,7 @@ using UnityEngine.InputSystem;
 
 public class CarDriver : MonoBehaviour
 {
+    [SerializeField] private GameObject focus;
     [SerializeField] private LayerMask ignoreLayer;
 
     private GameInput input;
@@ -29,6 +30,8 @@ public class CarDriver : MonoBehaviour
 
     private void Update()
     {
+        if (!focus.activeSelf) return;
+
         if (Physics.Raycast(transform.position, transform.forward, out RaycastHit hit, 0.5f, ~ignoreLayer))
         {
             newItem = hit.collider.GetComponentInParent<Interactable>();
