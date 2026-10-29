@@ -317,6 +317,7 @@ public class PlayerController : MonoBehaviour
 
     private void MovePlayer()
     {
+        if (!gameObject.activeInHierarchy) return;
         CollisionFlags flags = controller.Move((move + Vector3.up * velocityY) * Time.deltaTime);
         if ((flags & CollisionFlags.Above) != 0 && velocityY > 0f) velocityY = groundGravity;
     }
@@ -329,7 +330,7 @@ public class PlayerController : MonoBehaviour
 
         stepT = Mathf.PI / bobSpeeds[(int)state];
 
-        if (Physics.SphereCast(transform.position + transform.up * controller.radius, 
+        if (Physics.SphereCast(transform.position + transform.up * controller.radius,
             controller.radius, -transform.up, out RaycastHit hit, controller.radius * 0.5f, ~ignoreLayer))
         {
             string surfaceTag = hit.collider.tag;
