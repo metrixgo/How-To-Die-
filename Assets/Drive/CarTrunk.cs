@@ -4,15 +4,24 @@ using UnityEngine.InputSystem;
 
 public class CarTrunk : MonoBehaviour
 {
+    [Header("Normal")]
     [SerializeField] private AudioClip open;
     [SerializeField] private AudioClip close;
     [SerializeField] private PlayerController player;
     [SerializeField] private GameObject trunkCam;
+    [SerializeField] private Interactable carDoor;
+
+    [Header("Items")]
+    [SerializeField] private AudioSource globalAd;
+    [SerializeField] private GameObject phone;
+    [SerializeField] private AudioClip pickUp;
 
     private bool opened = false;
     private bool opening = false;
     private AudioSource ad;
     private Interactable ib;
+
+    private bool pickedUp = false;
 
     Quaternion startR = Quaternion.Euler(-90f, 0f, 0f);
     Quaternion endR = Quaternion.Euler(-20f, 0f, 0f);
@@ -61,6 +70,8 @@ public class CarTrunk : MonoBehaviour
 
     private IEnumerator OpenDoor()
     {
+        carDoor.enabled = false;
+
         float t = 0;
         float length = 0.5f;
         bool flg = false;
@@ -69,7 +80,7 @@ public class CarTrunk : MonoBehaviour
         {
             transform.localRotation = Quaternion.Lerp(startR, endR, t / length);
             t += Time.deltaTime;
-            if (t > 0.2f && !flg)
+            if (t > 0.4f && !flg)
             {
                 flg = true;
                 player.gameObject.SetActive(false);
@@ -81,7 +92,7 @@ public class CarTrunk : MonoBehaviour
 
         transform.localRotation = endR;
 
-        yield return new WaitForSeconds(0.8f);
+        yield return new WaitForSeconds(0.9f);
         opening = false;
     }
 
@@ -112,5 +123,13 @@ public class CarTrunk : MonoBehaviour
         opening = false;
         ib.enabled = true;
         player.CanDo.Move = true;
+        carDoor.enabled = true;
+    }
+
+    public void PickUpPhone()
+    {
+        pickedUp = true;
+        globalAd.PlayOneShot(pickUp);
+        Destroy(phone);
     }
 }

@@ -26,13 +26,15 @@ public class CarDriver : MonoBehaviour
     private void OnDisable()
     {
         input.Disable();
+        if (curItem != null) curItem.SetFocused(false);
+        if (newItem != null) newItem.SetFocused(false);
     }
 
     private void Update()
     {
         if (!focus.activeSelf) return;
 
-        if (Physics.Raycast(transform.position, transform.forward, out RaycastHit hit, 3f, ~ignoreLayer))
+        if (Physics.Raycast(transform.position, transform.forward, out RaycastHit hit, 1f, ~ignoreLayer))
         {
             newItem = hit.collider.GetComponentInParent<Interactable>();
 

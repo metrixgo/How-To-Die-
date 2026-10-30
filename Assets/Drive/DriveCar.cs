@@ -48,7 +48,6 @@ public class DriveCar : MonoBehaviour
     private float prevAng;
 
     public bool stopped = false;
-    public bool pickedUpPhone = false;
 
     private void Awake()
     {
@@ -131,7 +130,6 @@ public class DriveCar : MonoBehaviour
         yield return StartCoroutine(DisplayDialogue("I need to go get my phone. I think I left it in my back trunk."));
         focus.SetActive(true);
         dScreen.SetActive(false);
-        yield return new WaitUntil(() => pickedUpPhone);
     }
 
     private IEnumerator DisplayDialogue(string content)
