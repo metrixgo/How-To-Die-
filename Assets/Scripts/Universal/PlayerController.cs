@@ -106,7 +106,7 @@ public class PlayerController : MonoBehaviour
     private float groundGravity = -2f;
 
     public float reachRange = 1.5f;
-    private float sensitivity = 5f;
+    private float sensitivity = 10f;
 
     public PlayerCanDo CanDo = new PlayerCanDo();
 
@@ -287,7 +287,7 @@ public class PlayerController : MonoBehaviour
         {
             newItem = hit.collider.GetComponentInParent<Interactable>();
 
-            if (newItem == null)
+            if (newItem == null || !newItem.enabled)
             {
                 if (curItem != null) curItem.SetFocused(false);
 

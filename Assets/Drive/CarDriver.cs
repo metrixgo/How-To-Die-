@@ -32,7 +32,7 @@ public class CarDriver : MonoBehaviour
     {
         if (!focus.activeSelf) return;
 
-        if (Physics.Raycast(transform.position, transform.forward, out RaycastHit hit, 0.5f, ~ignoreLayer))
+        if (Physics.Raycast(transform.position, transform.forward, out RaycastHit hit, 3f, ~ignoreLayer))
         {
             newItem = hit.collider.GetComponentInParent<Interactable>();
 
