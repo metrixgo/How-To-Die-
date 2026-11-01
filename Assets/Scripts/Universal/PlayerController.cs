@@ -52,6 +52,7 @@ public class PlayerController : MonoBehaviour
     [Header("Player")]
     [SerializeField] private Transform playerCam;
     [SerializeField] private Transform playerBody;
+    [SerializeField] private GameObject focus;
 
     [Header("Layers")]
     [SerializeField] private LayerMask ignoreLayer;
@@ -287,7 +288,7 @@ public class PlayerController : MonoBehaviour
         {
             newItem = hit.collider.GetComponentInParent<Interactable>();
 
-            if (newItem == null || !newItem.enabled)
+            if (newItem == null || !newItem.enabled || !focus.activeSelf)
             {
                 if (curItem != null) curItem.SetFocused(false);
 

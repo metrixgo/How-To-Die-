@@ -1,4 +1,5 @@
 using System.Collections;
+using Unity.Cinemachine;
 using UnityEngine;
 
 public class CarDoor : MonoBehaviour
@@ -7,6 +8,8 @@ public class CarDoor : MonoBehaviour
     [SerializeField] private AudioClip close;
     [SerializeField] private PlayerController player;
     [SerializeField] private GameObject driver;
+    [SerializeField] private CinemachineBrain brain;
+    [SerializeField] private GameObject focus;
 
     private bool opened = false;
     private bool opening = false;
@@ -16,10 +19,16 @@ public class CarDoor : MonoBehaviour
     Quaternion startR = Quaternion.Euler(270f, 0f, 0f);
     Quaternion endR = Quaternion.Euler(270f, 40f, 0f);
 
+    private CinemachineBlendDefinition blendD;
+
     private void Awake()
     {
         ad = GetComponent<AudioSource>();
         ib = GetComponent<Interactable>();
+        blendD = new CinemachineBlendDefinition(
+            CinemachineBlendDefinition.Styles.EaseInOut,
+            1f
+        );
     }
 
     public void InteractDoor()
@@ -28,6 +37,7 @@ public class CarDoor : MonoBehaviour
 
         opened = !opened;
         opening = true;
+        focus.SetActive(false);
         ib.enabled = false;
 
         if (opened) StartCoroutine(OpenDoor());
@@ -48,6 +58,7 @@ public class CarDoor : MonoBehaviour
             {
                 flg = true;
                 player.transform.localPosition = new Vector3(-1.22281504f, 0.0249082576f, -0.460198969f);
+                brain.DefaultBlend = blendD;
                 player.gameObject.SetActive(true);
                 player.CanDo.Move = false;
                 driver.SetActive(false);
@@ -60,12 +71,14 @@ public class CarDoor : MonoBehaviour
 
         yield return new WaitForSeconds(0.8f);
         player.CanDo.Move = true;
+        focus.SetActive(true); ;
         opening = false;
         ib.enabled = true;
     }
 
     private IEnumerator CloseDoor()
     {
+        brain.DefaultBlend = blendD;
         player.gameObject.SetActive(false);
         driver.SetActive(true);
         yield return new WaitForSeconds(0.5f);
@@ -88,6 +101,7 @@ public class CarDoor : MonoBehaviour
         transform.localRotation = startR;
 
         opening = false;
+        focus.SetActive(true);
         ib.enabled = true;
     }
 }

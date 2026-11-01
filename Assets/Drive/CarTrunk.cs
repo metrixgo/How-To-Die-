@@ -1,33 +1,43 @@
 using System.Collections;
+using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class CarTrunk : MonoBehaviour
 {
-    [Header("Normal")]
     [SerializeField] private AudioClip open;
     [SerializeField] private AudioClip close;
     [SerializeField] private PlayerController player;
     [SerializeField] private GameObject trunkCam;
+    [SerializeField] private GameObject bookCam;
+    [SerializeField] private GameObject key;
     [SerializeField] private Interactable carDoor;
-
-    [Header("Items")]
     [SerializeField] private AudioSource globalAd;
     [SerializeField] private GameObject phone;
     [SerializeField] private AudioClip pickUp;
+    [SerializeField] private AudioClip pickUpKey;
+    [SerializeField] private GameObject sideWalls;
+    [SerializeField] private AudioSource backCar;
+    [SerializeField] private CinemachineBrain brain;
+    [SerializeField] private GameObject focus;
 
     private bool opened = false;
     private bool opening = false;
     private AudioSource ad;
     private Interactable ib;
 
-    private bool pickedUp = false;
+    private bool pickedUpPhone = false;
+    private bool focusOnBook = false;
+    private bool startCrashing = false;
 
     Quaternion startR = Quaternion.Euler(-90f, 0f, 0f);
     Quaternion endR = Quaternion.Euler(-20f, 0f, 0f);
 
     private GameInput input;
     private InputAction returnAction;
+
+    private CinemachineBlendDefinition blend1;
+    private CinemachineBlendDefinition blend2;
 
     private void Awake()
     {
@@ -36,6 +46,15 @@ public class CarTrunk : MonoBehaviour
 
         input = new GameInput();
         returnAction = input.Game.Return;
+
+        blend1 = new CinemachineBlendDefinition(
+            CinemachineBlendDefinition.Styles.EaseInOut,
+            1f
+        );
+        blend2 = new CinemachineBlendDefinition(
+            CinemachineBlendDefinition.Styles.EaseInOut,
+            2f
+        );
     }
 
     private void OnEnable()
@@ -50,9 +69,10 @@ public class CarTrunk : MonoBehaviour
 
     private void Update()
     {
-        if(returnAction.WasPressedThisFrame() && opened && !opening)
+        if(returnAction.WasPressedThisFrame() && opened && !opening && !startCrashing)
         {
-            InteractDoor();
+            if (focusOnBook) InteractBook();
+            else InteractDoor();
         }
     }
 
@@ -61,6 +81,7 @@ public class CarTrunk : MonoBehaviour
         if (opening) return;
 
         opened = !opened;
+        focus.SetActive(false);
         opening = true;
         ib.enabled = false;
 
@@ -83,6 +104,7 @@ public class CarTrunk : MonoBehaviour
             if (t > 0.4f && !flg)
             {
                 flg = true;
+                brain.DefaultBlend = blend1;
                 player.gameObject.SetActive(false);
                 trunkCam.SetActive(true);
             }
@@ -94,10 +116,20 @@ public class CarTrunk : MonoBehaviour
 
         yield return new WaitForSeconds(0.9f);
         opening = false;
+        focus.SetActive(true);
     }
 
     private IEnumerator CloseDoor()
     {
+        if (pickedUpPhone)
+        {
+            sideWalls.SetActive(true);
+            backCar.gameObject.SetActive(true);
+            StartCoroutine(Crash());
+        }
+
+        brain.DefaultBlend = blend1;
+        player.transform.localPosition = new Vector3(-0.00787682831f, 0.025003599f, -2.61117959f);
         player.gameObject.SetActive(true);
         player.CanDo.Move = false;
         trunkCam.SetActive(false);
@@ -121,15 +153,55 @@ public class CarTrunk : MonoBehaviour
         transform.localRotation = startR;
 
         opening = false;
-        ib.enabled = true;
+        focus.SetActive(true);
+        
+        if(!startCrashing) ib.enabled = true;
         player.CanDo.Move = true;
         carDoor.enabled = true;
     }
 
+    private IEnumerator Crash()
+    {
+        startCrashing = true;
+
+        float t = 0f, l = 3f;
+        while(t < l)
+        {
+            t += Time.deltaTime;
+            yield return null;
+        }
+    }
+
+    public void InteractBook()
+    {
+        if (opening || startCrashing) return;
+        opening = true;
+        focus.SetActive(false);
+        brain.DefaultBlend = blend2;
+        focusOnBook = !focusOnBook;
+        bookCam.SetActive(focusOnBook); 
+        trunkCam.SetActive(!focusOnBook);
+        StartCoroutine(Book());
+    }
+
+    private IEnumerator Book()
+    {
+        yield return new WaitForSeconds(2f);
+        opening = false;
+        focus.SetActive(true);
+    }
+
     public void PickUpPhone()
     {
-        pickedUp = true;
+        pickedUpPhone = true;
         globalAd.PlayOneShot(pickUp);
         Destroy(phone);
+    }
+
+    public void PickUpKey()
+    {
+        PlayerPrefs.SetInt("Key", 1);
+        globalAd.PlayOneShot(pickUpKey);
+        Destroy(key);
     }
 }
