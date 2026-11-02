@@ -2,6 +2,7 @@ using System.Collections;
 using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class CarTrunk : MonoBehaviour
 {
@@ -21,7 +22,14 @@ public class CarTrunk : MonoBehaviour
     [SerializeField] private AudioSource horn;
     [SerializeField] private CinemachineBrain brain;
     [SerializeField] private GameObject focus;
+    [SerializeField] private AudioClip skidding;
     [SerializeField] private AudioClip crash;
+
+    [Header("AfterCrash")]
+    [SerializeField] private GameObject crashed;
+    [SerializeField] private GameObject cam1;
+    [SerializeField] private GameObject cam2;
+    [SerializeField] private GameObject cam3;
 
     private bool opened = false;
     private bool opening = false;
@@ -38,6 +46,7 @@ public class CarTrunk : MonoBehaviour
     private GameInput input;
     private InputAction returnAction;
 
+    private CinemachineBlendDefinition blend0;
     private CinemachineBlendDefinition blend1;
     private CinemachineBlendDefinition blend2;
 
@@ -49,6 +58,10 @@ public class CarTrunk : MonoBehaviour
         input = new GameInput();
         returnAction = input.Game.Return;
 
+        blend0 = new CinemachineBlendDefinition(
+            CinemachineBlendDefinition.Styles.EaseInOut,
+            0f
+        );
         blend1 = new CinemachineBlendDefinition(
             CinemachineBlendDefinition.Styles.EaseInOut,
             1f
@@ -168,13 +181,18 @@ public class CarTrunk : MonoBehaviour
         horn.Play();
         Vector3 startPos = backCar.localPosition;
         Vector3 endPos = new Vector3(0f, 0f, -3f);
-        bool entered = false, cutScene = false;
+        bool skiddled = false, crashed = false, cutScene = false;
         float t = 0f, l = 3f;
         while(t < l)
         {
-            if (t > l - 0.3f && !entered)
+            if(t > l - 2f && !skiddled)
             {
-                entered = true;
+                skiddled = true;
+                horn.PlayOneShot(skidding);
+            }
+            if (t > l - 0.3f && !crashed)
+            {
+                crashed = true;
                 globalAd.PlayOneShot(crash);
             }
             if (t > l - 0.1f && !cutScene)
@@ -189,15 +207,24 @@ public class CarTrunk : MonoBehaviour
             yield return null;
         }
 
+        player.gameObject.SetActive(false);
+        yield return new WaitForSeconds(1f);
+        brain.DefaultBlend = blend0;
+        cam1.SetActive(true);
         yield return new WaitForSeconds(1f);
         yield return StartCoroutine(GameManager.Instance.ExitCutScene(0.1f));
         yield return StartCoroutine(GameManager.Instance.EnterCutScene(0.1f));
+        cam1.SetActive(false);
+        cam2.SetActive(true);
         yield return new WaitForSeconds(1f);
         yield return StartCoroutine(GameManager.Instance.ExitCutScene(0.1f));
         yield return StartCoroutine(GameManager.Instance.EnterCutScene(0.1f));
+        cam2.SetActive(false);
+        cam3.SetActive(true);
         yield return new WaitForSeconds(1f);
         yield return StartCoroutine(GameManager.Instance.ExitCutScene(0.1f));
         yield return StartCoroutine(GameManager.Instance.EnterCutScene(0.1f));
+        SceneManager.LoadScene("SwimScene");
     }
 
     public void InteractBook()
