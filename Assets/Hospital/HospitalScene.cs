@@ -29,6 +29,8 @@ public class HospitalScene : MonoBehaviour
 
     private void Awake()
     {
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
         volume.profile.TryGet(out eye);
     }
 

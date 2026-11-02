@@ -113,7 +113,7 @@ public class DriveCar : MonoBehaviour
         Quaternion goalAng = Quaternion.Euler(handle.localEulerAngles.x, handle.localEulerAngles.y, -180f - deltaAng / Time.deltaTime);
         handle.localRotation = Quaternion.Slerp(handle.localRotation, goalAng, Time.deltaTime);
 
-        float deltaFuel = 0.1f + Mathf.Max(drive.y, 0f) * 10.2f;
+        float deltaFuel = 0.1f + Mathf.Max(drive.y, 0f) * 0.3f;
         fuel.Rotate(Vector3.up * deltaFuel * Time.deltaTime);
         if (fuel.localEulerAngles.y > fuelAng * 0.8f && !fuelLight.activeSelf) fuelLight.SetActive(true);
         spin.localEulerAngles = Vector3.Lerp(Vector3.zero, Vector3.up * spinAng, curSpeed / maxs);

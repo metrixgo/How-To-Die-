@@ -47,9 +47,6 @@ public class GameManager : MonoBehaviour
         pauseAction = input.Game.Pause;
         skipAction = input.Game.Skip;
 
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
-
         SetSceneVolume(0f);
         SetCutsceneVolume(CutSceneVolume);
         backScreen.color = Color.black;

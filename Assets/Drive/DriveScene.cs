@@ -7,6 +7,8 @@ public class DriveScene : MonoBehaviour
 
     private IEnumerator Start()
     {
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
         yield return new WaitForSeconds(1f);
         yield return StartCoroutine(GameManager.Instance.DisplayDialogue("Someone dies before they even realize it."));
         StartCoroutine(GameManager.Instance.ExitCutScene(3f));
