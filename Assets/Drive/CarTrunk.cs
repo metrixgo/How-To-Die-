@@ -26,7 +26,7 @@ public class CarTrunk : MonoBehaviour
     [SerializeField] private AudioClip crash;
 
     [Header("AfterCrash")]
-    [SerializeField] private GameObject crashed;
+    [SerializeField] private GameObject crashedStuff;
     [SerializeField] private GameObject cam1;
     [SerializeField] private GameObject cam2;
     [SerializeField] private GameObject cam3;
@@ -201,29 +201,32 @@ public class CarTrunk : MonoBehaviour
                 StartCoroutine(GameManager.Instance.EnterCutScene(0.1f));
             }
 
-            horn.volume = Mathf.Lerp(0f, 0.8f, t / l - 0.6f);
+            horn.volume = Mathf.Lerp(0f, 1f, t / l - 0.5f);
             backCar.localPosition = Vector3.Lerp(startPos, endPos, t / l);
             t += Time.deltaTime;
             yield return null;
         }
 
-        player.gameObject.SetActive(false);
         yield return new WaitForSeconds(1f);
+        horn.Stop();
+        crashedStuff.SetActive(true);
+        player.gameObject.SetActive(false);
         brain.DefaultBlend = blend0;
         cam1.SetActive(true);
-        yield return new WaitForSeconds(1f);
-        yield return StartCoroutine(GameManager.Instance.ExitCutScene(0.1f));
-        yield return StartCoroutine(GameManager.Instance.EnterCutScene(0.1f));
+        yield return new WaitForSeconds(4f);
+        yield return StartCoroutine(GameManager.Instance.ExitCutScene(0.5f));
+        yield return StartCoroutine(GameManager.Instance.EnterCutScene(0.5f));
         cam1.SetActive(false);
         cam2.SetActive(true);
-        yield return new WaitForSeconds(1f);
-        yield return StartCoroutine(GameManager.Instance.ExitCutScene(0.1f));
-        yield return StartCoroutine(GameManager.Instance.EnterCutScene(0.1f));
+        yield return new WaitForSeconds(3f);
+        yield return StartCoroutine(GameManager.Instance.ExitCutScene(0.2f));
+        yield return StartCoroutine(GameManager.Instance.EnterCutScene(0.2f));
         cam2.SetActive(false);
         cam3.SetActive(true);
-        yield return new WaitForSeconds(1f);
-        yield return StartCoroutine(GameManager.Instance.ExitCutScene(0.1f));
-        yield return StartCoroutine(GameManager.Instance.EnterCutScene(0.1f));
+        yield return new WaitForSeconds(4f);
+        yield return StartCoroutine(GameManager.Instance.ExitCutScene(0.6f));
+        yield return new WaitForSeconds(0.2f);
+        yield return StartCoroutine(GameManager.Instance.EnterCutScene(0.6f));
         SceneManager.LoadScene("SwimScene");
     }
 
