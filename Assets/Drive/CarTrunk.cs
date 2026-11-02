@@ -17,9 +17,11 @@ public class CarTrunk : MonoBehaviour
     [SerializeField] private AudioClip pickUp;
     [SerializeField] private AudioClip pickUpKey;
     [SerializeField] private GameObject sideWalls;
-    [SerializeField] private AudioSource backCar;
+    [SerializeField] private Transform backCar;
+    [SerializeField] private AudioSource horn;
     [SerializeField] private CinemachineBrain brain;
     [SerializeField] private GameObject focus;
+    [SerializeField] private AudioClip crash;
 
     private bool opened = false;
     private bool opening = false;
@@ -163,13 +165,39 @@ public class CarTrunk : MonoBehaviour
     private IEnumerator Crash()
     {
         startCrashing = true;
-
+        horn.Play();
+        Vector3 startPos = backCar.localPosition;
+        Vector3 endPos = new Vector3(0f, 0f, -3f);
+        bool entered = false, cutScene = false;
         float t = 0f, l = 3f;
         while(t < l)
         {
+            if (t > l - 0.3f && !entered)
+            {
+                entered = true;
+                globalAd.PlayOneShot(crash);
+            }
+            if (t > l - 0.1f && !cutScene)
+            {
+                cutScene = true;
+                StartCoroutine(GameManager.Instance.EnterCutScene(0.1f));
+            }
+
+            horn.volume = Mathf.Lerp(0f, 0.8f, t / l - 0.6f);
+            backCar.localPosition = Vector3.Lerp(startPos, endPos, t / l);
             t += Time.deltaTime;
             yield return null;
         }
+
+        yield return new WaitForSeconds(1f);
+        yield return StartCoroutine(GameManager.Instance.ExitCutScene(0.1f));
+        yield return StartCoroutine(GameManager.Instance.EnterCutScene(0.1f));
+        yield return new WaitForSeconds(1f);
+        yield return StartCoroutine(GameManager.Instance.ExitCutScene(0.1f));
+        yield return StartCoroutine(GameManager.Instance.EnterCutScene(0.1f));
+        yield return new WaitForSeconds(1f);
+        yield return StartCoroutine(GameManager.Instance.ExitCutScene(0.1f));
+        yield return StartCoroutine(GameManager.Instance.EnterCutScene(0.1f));
     }
 
     public void InteractBook()
