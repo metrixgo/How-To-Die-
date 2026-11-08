@@ -6,9 +6,9 @@ using UnityEngine.Splines;
 
 public class DriveCar : MonoBehaviour
 {
-    public float acce = 0.02f;
-    public float frict = 0.006f;
-    public float maxs = 0.16f;
+    private float acce = 0.015f;
+    private float frict = 0.006f;
+    private  float maxs = 0.13f;
 
     [Header("Sounds")]
     [SerializeField] private AudioSource idle;
