@@ -111,7 +111,7 @@ public class PlayerController : MonoBehaviour
     private float groundGravity = -2f;
 
     public float reachRange = 1.5f;
-    private float sensitivity = 10f;
+    private float sensitivity = 15f;
 
     public PlayerCanDo CanDo = new PlayerCanDo();
 
@@ -162,6 +162,9 @@ public class PlayerController : MonoBehaviour
     private void OnDisable()
     {
         input.Disable();
+        if (curItem != null) curItem.SetFocused(false);
+        newItem = null;
+        curItem = null;
     }
 
     private void Update()
@@ -173,14 +176,6 @@ public class PlayerController : MonoBehaviour
         GetInput();
         UpdateState();
         CameraBobbing();
-
-        if (canSwim)
-        {
-            if(playerCam.transform.position.y < waterHeight)
-            {
-                
-            }
-        }
 
         HandleMove();
         HandleJump();

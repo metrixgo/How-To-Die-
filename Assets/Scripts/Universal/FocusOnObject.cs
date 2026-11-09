@@ -9,7 +9,7 @@ public class FocusOnObject : MonoBehaviour
     [Header("Cameras")]
     [SerializeField] private CinemachineBrain brain;
     [SerializeField] private GameObject focusCamera;
-    [SerializeField] private GameObject playerCamera;
+    [SerializeField] private GameObject player;
 
     [Header("Settings")]
     [SerializeField] private float transitionLength = 1f;
@@ -17,6 +17,7 @@ public class FocusOnObject : MonoBehaviour
 
     [Header("Rendering")]
     [SerializeField] private RenderTexture gameRenderTexture;
+    [SerializeField] private GameObject focus;
 
     [Header("IgnoreLayer")]
     [SerializeField] private LayerMask ignoreLayer;
@@ -64,7 +65,7 @@ public class FocusOnObject : MonoBehaviour
 
     public void FocusOn()
     {
-        if (!transitioning && !focused && playerCamera.activeSelf)
+        if (!transitioning && !focused && player.activeSelf)
             StartCoroutine(Focus());
     }
 
@@ -76,7 +77,7 @@ public class FocusOnObject : MonoBehaviour
 
     public GameObject InteractedObject()
     {
-        if(interactAction.WasPressedThisFrame())
+        if (interactAction.WasPressedThisFrame() && enableMouse)
         {
             Vector2 mousePos = Mouse.current.position.ReadValue();
             float x = mousePos.x / Screen.width * gameRenderTexture.width;
@@ -92,21 +93,17 @@ public class FocusOnObject : MonoBehaviour
     private IEnumerator Focus()
     {
         focused = !focused;
+        focus.SetActive(false);
 
         transitioning = true;
         brain.DefaultBlend = blendStyle;
         focusCamera.SetActive(focused);
-        playerCamera.SetActive(!focused);
+        player.SetActive(!focused);
 
-        if (focused)
-        {
-            MainManager.Instance.BlockPlayer(true);
-        }
-        else
+        if (!focused)
         {
             focusOffEvent.Invoke();
             yield return new WaitForEndOfFrame();
-            MainManager.Instance.BlockPause(false);
 
             if (enableMouse)
             {
@@ -120,7 +117,6 @@ public class FocusOnObject : MonoBehaviour
         if (focused)
         {
             focusOnEvent.Invoke();
-            MainManager.Instance.BlockPause(true);
 
             if (enableMouse)
             {
@@ -128,11 +124,8 @@ public class FocusOnObject : MonoBehaviour
                 Cursor.visible = true;
             }
         }
-        else
-        {
-            MainManager.Instance.BlockPlayer(false);
-        }
 
         transitioning = false;
+        if (!focused) focus.SetActive(true);
     }
 }

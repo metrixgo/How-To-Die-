@@ -22,12 +22,13 @@ public class SwimScene : MonoBehaviour
 
     private IEnumerator Start()
     {
-        yield return new WaitForSeconds(4f);
+        /*yield return new WaitForSeconds(4f);
         yield return StartCoroutine(GameManager.Instance.DisplayDialogue("Someone knows they¡¯re dying. But they can do nothing."));
         yield return new WaitForSeconds(2f);
         yield return StartCoroutine(GameManager.Instance.DisplayDialogue("They can just watch death walk towards them. Step by step."));
         yield return new WaitForSeconds(1f);
-        StartCoroutine(GameManager.Instance.ExitCutScene(3f));
+        StartCoroutine(GameManager.Instance.ExitCutScene(3f));*/
+        yield return StartCoroutine(GameManager.Instance.ExitCutScene(0f));
     }
 
 }
