@@ -1,0 +1,134 @@
+# Blender 4.0.2 MTL File: 'WoodenPack.blend'
+# www.blender.org
+
+newmtl Bed
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.556187 0.800836 0.761928
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Bump -bm 1.000000 C:/BlenderProjects/WoodenPack/Textures/Fabric018_4K-JPG/Fabric018_4K-JPG_NormalGL.jpg
+
+newmtl Cloth
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd C:/BlenderProjects/WoodenPack/Textures/Fabric030_4K-JPG/Fabric030_4K-JPG_Color.jpg
+map_Bump -bm 1.000000 C:/BlenderProjects/WoodenPack/Textures/Fabric030_4K-JPG/Fabric030_4K-JPG_NormalGL.jpg
+
+newmtl Dirt
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd C:/BlenderProjects/WoodenPack/Textures/Ground036_4K-JPG/Ground036_4K-JPG_Color.jpg
+map_Bump -bm 1.000000 C:/BlenderProjects/WoodenPack/Textures/Ground036_4K-JPG/Ground036_4K-JPG_NormalGL.jpg
+
+newmtl IronPlate
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd C:/BlenderProjects/WoodenPack/Textures/DiamondPlate008C_4K-JPG/DiamondPlate008C_4K-JPG_Color.jpg
+map_Bump -bm 1.000000 C:/BlenderProjects/WoodenPack/Textures/DiamondPlate008C_4K-JPG/DiamondPlate008C_4K-JPG_NormalGL.jpg
+
+newmtl Metal
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd C:/BlenderProjects/WoodenPack/Textures/Metal025_4K-JPG/Metal025_4K-JPG_Color.jpg
+map_Bump -bm 1.000000 C:/BlenderProjects/WoodenPack/Textures/Metal025_4K-JPG/Metal025_4K-JPG_NormalGL.jpg
+
+newmtl Planks
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd C:/BlenderProjects/WoodenPack/Textures/Wood059_4K-JPG/Wood059_4K-JPG_Color.jpg
+map_Bump -bm 1.000000 C:/BlenderProjects/WoodenPack/Textures/Wood059_4K-JPG/Wood059_4K-JPG_NormalGL.jpg
+
+newmtl Planks2
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd C:/BlenderProjects/WoodenPack/Textures/PaintedWood008C_2K-JPG/PaintedWood008C_2K-JPG_Color.jpg
+map_Bump -bm 1.000000 C:/BlenderProjects/WoodenPack/Textures/PaintedWood008C_2K-JPG/PaintedWood008C_2K-JPG_NormalGL.jpg
+
+newmtl Plastic
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd C:/BlenderProjects/WoodenPack/Textures/Plastic015B_4K-JPG/Plastic015B_4K-JPG_Color.jpg
+map_Bump -bm 1.000000 C:/BlenderProjects/WoodenPack/Textures/Plastic015B_4K-JPG/Plastic015B_4K-JPG_NormalGL.jpg
+
+newmtl Rock
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd C:/BlenderProjects/WoodenPack/Textures/Rock020_4K-JPG/Rock020_4K-JPG_Color.jpg
+map_Bump -bm 1.000000 C:/BlenderProjects/WoodenPack/Textures/Rock020_4K-JPG/Rock020_4K-JPG_NormalGL.jpg
+
+newmtl Rope
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd C:/BlenderProjects/WoodenPack/Textures/Fabric018_4K-JPG/Fabric018_4K-JPG_Color.jpg
+map_Bump -bm 1.000000 C:/BlenderProjects/WoodenPack/Textures/Fabric018_4K-JPG/Fabric018_4K-JPG_NormalGL.jpg
+
+newmtl TreeEnd
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd C:/BlenderProjects/WoodenPack/Textures/TreeEnd005_4K-JPG/TreeEnd005_4K-JPG_Color.jpg
+map_Bump -bm 1.000000 C:/BlenderProjects/WoodenPack/Textures/TreeEnd005_4K-JPG/TreeEnd005_4K-JPG_NormalGL.jpg
+
+newmtl Wood
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd C:/BlenderProjects/WoodenPack/Textures/Bark012_4K-JPG/Bark012_4K-JPG_Color.jpg
+map_Bump -bm 1.000000 C:/BlenderProjects/WoodenPack/Textures/Bark012_4K-JPG/Bark012_4K-JPG_NormalGL.jpg

@@ -214,21 +214,21 @@ public class CarTrunk : MonoBehaviour
         brain.DefaultBlend = blend0;
         cam1.SetActive(true);
         yield return new WaitForSeconds(4f);
-        yield return StartCoroutine(GameManager.Instance.ExitCutScene(0.5f));
-        yield return new WaitForSeconds(0.1f);
-        yield return StartCoroutine(GameManager.Instance.EnterCutScene(0.5f));
+        yield return StartCoroutine(GameManager.Instance.ExitCutScene(0.4f));
+        yield return new WaitForSeconds(0.5f);
+        yield return StartCoroutine(GameManager.Instance.EnterCutScene(0.1f));
         cam1.SetActive(false);
         cam2.SetActive(true);
         yield return new WaitForSeconds(3f);
-        yield return StartCoroutine(GameManager.Instance.ExitCutScene(0.3f));
-        yield return new WaitForSeconds(0.1f);
-        yield return StartCoroutine(GameManager.Instance.EnterCutScene(0.3f));
+        yield return StartCoroutine(GameManager.Instance.ExitCutScene(0.4f));
+        yield return new WaitForSeconds(0.5f);
+        yield return StartCoroutine(GameManager.Instance.EnterCutScene(0.1f));
         cam2.SetActive(false);
         cam3.SetActive(true);
         yield return new WaitForSeconds(4f);
-        yield return StartCoroutine(GameManager.Instance.ExitCutScene(0.6f));
-        yield return new WaitForSeconds(0.2f);
-        yield return StartCoroutine(GameManager.Instance.EnterCutScene(0.6f));
+        yield return StartCoroutine(GameManager.Instance.ExitCutScene(0.4f));
+        yield return new WaitForSeconds(0.5f);
+        yield return StartCoroutine(GameManager.Instance.EnterCutScene(0.1f));
         SceneManager.LoadScene("SwimScene");
     }
 

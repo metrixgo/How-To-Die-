@@ -60,6 +60,10 @@ public class PlayerController : MonoBehaviour
     [Header("Footstep Sounds")]
     [SerializeField] private SurfaceSound[] surfaceSounds;
 
+    [Header("Swim")]
+    [SerializeField] private bool canSwim = false;
+    [SerializeField] private float waterHeight = 22f;
+
     private AudioSource playerAd;
 
     private CharacterController controller;
@@ -169,6 +173,14 @@ public class PlayerController : MonoBehaviour
         GetInput();
         UpdateState();
         CameraBobbing();
+
+        if (canSwim)
+        {
+            if(playerCam.transform.position.y < waterHeight)
+            {
+                
+            }
+        }
 
         HandleMove();
         HandleJump();
