@@ -5,6 +5,7 @@ using UnityEngine.InputSystem;
 public class SwimPlayer : MonoBehaviour
 {
     [SerializeField] private Transform playerCam;
+    [SerializeField] private AudioSource underwater;
 
     private float Speed = 1000f;
     private float WaterY = -0.1f;
@@ -49,7 +50,10 @@ public class SwimPlayer : MonoBehaviour
         move = transform.forward * forward * Speed * Time.deltaTime;
         if (transform.position.y > WaterY) move.y = 0f;
         rb.AddForce(move);
-        if(transform.position.y > WaterY) rb.AddForce(Vector3.down * 5f);
+        if(transform.position.y > WaterY) rb.AddForce(Vector3.down * 2f);
         else rb.AddForce(Vector3.up * 1f);
+
+        if(transform.position.y < WaterY - 0.2f) underwater.volume = 0.7f;
+        else underwater.volume = 0f;
     }
 }

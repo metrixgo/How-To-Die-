@@ -7,6 +7,7 @@ public class PickUpItem : MonoBehaviour
     [SerializeField] private string itemName;
 
     [Header("References")]
+    [SerializeField] private AudioSource effectsPlayer;
     [SerializeField] private AudioClip pickUpEffect;
     [SerializeField] private GameObject playerHold;
     [SerializeField] private PutDownItem putDownItem;
@@ -44,13 +45,10 @@ public class PickUpItem : MonoBehaviour
                 trig.triggerType = TriggerType.DisplayDialogue;
                 trig.displayDialogueSpeaker = "You";
                 trig.displayDialogueContent = "My hands are full...";
-                MainManager.Instance.AddTrigger(trig);
             }
             else
             {
-                MainManager.Instance.AddItem(itemName);
-                MainManager.Instance.PlayEffect(pickUpEffect);
-
+                effectsPlayer.PlayOneShot(pickUpEffect);
                 transform.SetParent(playerHold.transform);
                 transform.localPosition = position;
                 transform.localRotation = rotation;
@@ -75,9 +73,7 @@ public class PickUpItem : MonoBehaviour
         }
         else
         {
-            MainManager.Instance.AddItem(itemName);
-            MainManager.Instance.PlayEffect(pickUpEffect);
-
+            effectsPlayer.PlayOneShot(pickUpEffect);
             additionalEffect.Invoke();
             Destroy(gameObject);
         }

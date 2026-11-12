@@ -112,7 +112,7 @@ public class PlayerController : MonoBehaviour
     private float groundGravity = -2f;
 
     public float reachRange = 1.5f;
-    private float sensitivity = 20f;
+    private float sensitivity = 25f;
 
     public PlayerCanDo CanDo = new PlayerCanDo();
 

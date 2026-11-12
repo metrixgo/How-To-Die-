@@ -6,14 +6,14 @@ using UnityEngine.Splines;
 
 public class BrotherSwim : MonoBehaviour
 {
-    [Header("Dialogue")]
     [SerializeField] private GameObject focus;
     [SerializeField] private GameObject dScreen;
     [SerializeField] private TextMeshProUGUI dContent;
     [SerializeField] private TextMeshProUGUI dSpeaker;
+    [SerializeField] private PlayerController player;
     [SerializeField] private AudioSource writingEffectsPlayer;
 
-    public bool gotGoggles = false;
+    private bool gotGoggles = false;
 
     private GameInput input;
     private InputAction skipAction;
@@ -40,11 +40,17 @@ public class BrotherSwim : MonoBehaviour
         if(!asking) StartCoroutine(Check());
     }
 
+    public void GetGoggles()
+    {
+        gotGoggles = true;
+    }
+
     private IEnumerator Check()
     {
         asking = true;
         dScreen.SetActive(true);
         focus.SetActive(false);
+        player.CanDo.Move = false;
         if (!gotGoggles)
         {
             yield return StartCoroutine(DisplayDialogue("Brother", "Go get your goggles upstairs!!! It's very dangerous to swim without it!!!"));
@@ -59,15 +65,18 @@ public class BrotherSwim : MonoBehaviour
         }
         dScreen.SetActive(false);
         focus.SetActive(true);
+        player.CanDo.Move = true;
 
         if (gotGoggles)
         {
+            focus.SetActive(false);
             anim.SetInteger("State", 1);
             float t = 0f, l = 5f, end = sa.Container.Spline.ConvertIndexUnit(5, PathIndexUnit.Knot, PathIndexUnit.Normalized);
             while (t < l)
             {
                 t += Time.deltaTime;
                 sa.NormalizedTime = Mathf.Lerp(0f, end, t / l);
+                yield return null;
             }
         }
     }
@@ -78,7 +87,7 @@ public class BrotherSwim : MonoBehaviour
         writingEffectsPlayer.Play();
         dSpeaker.text = speaker;
 
-        float t = 0f, gap = 0.05f;
+        float t = 0f, gap = 0.03f;
         int idx = 0;
 
         dContent.text = "";
