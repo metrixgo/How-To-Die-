@@ -11,11 +11,11 @@ public class SwimScene : MonoBehaviour
     [Header("Rendering")]
     [SerializeField] private Volume volume;
     [SerializeField] private Image screen;
-    [SerializeField] private GameObject focus;
     private DepthOfField dof;
     private Vignette v;
 
     [Header("Dialogue")]
+    [SerializeField] private GameObject focus;
     [SerializeField] private GameObject dScreen;
     [SerializeField] private TextMeshProUGUI dContent;
     [SerializeField] private TextMeshProUGUI dSpeaker;
@@ -35,6 +35,9 @@ public class SwimScene : MonoBehaviour
         skipAction = input.Game.Skip;
     }
 
+    private void OnEnable() => input.Enable();
+    private void OnDisable() => input.Disable();
+
     private IEnumerator Start()
     {
         /*yield return new WaitForSeconds(4f);
@@ -42,6 +45,7 @@ public class SwimScene : MonoBehaviour
         yield return new WaitForSeconds(2f);
         yield return StartCoroutine(GameManager.Instance.DisplayDialogue("They can just watch death walk towards them. Step by step."));
         yield return new WaitForSeconds(1f);
+        focus.SetActive(false);
         StartCoroutine(GameManager.Instance.ExitCutScene(3f));
         yield return new WaitForSeconds(2f);
         dScreen.SetActive(true);

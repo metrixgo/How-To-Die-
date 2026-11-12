@@ -23,6 +23,7 @@ public class SwimPlayer : MonoBehaviour
         moveAction = input.Player.Move;
 
         rb = GetComponent<Rigidbody>();
+        camPanTilt = GetComponent<CinemachinePanTilt>();
     }
 
     private void OnEnable()
