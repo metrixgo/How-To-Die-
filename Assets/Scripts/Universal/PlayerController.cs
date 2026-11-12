@@ -62,7 +62,8 @@ public class PlayerController : MonoBehaviour
 
     [Header("Swim")]
     [SerializeField] private bool canSwim = false;
-    [SerializeField] private float waterHeight = 22f;
+    [SerializeField] private GameObject swimPlayer;
+    private float waterHeight = -0.1f;
 
     private AudioSource playerAd;
 
@@ -184,6 +185,13 @@ public class PlayerController : MonoBehaviour
 
         MovePlayer();
         FootstepSounds();
+
+        if (canSwim && playerCam.position.y < waterHeight)
+        {
+            swimPlayer.SetActive(true);
+            swimPlayer.transform.parent = null;
+            gameObject.SetActive(false);
+        }
     }
 
     private void GetInput()
