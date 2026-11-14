@@ -12,7 +12,7 @@ public class SwimPlayer : MonoBehaviour
     [SerializeField] private Volume volume;
     private Vignette v;
 
-    private float Speed = 200f;
+    private float Speed = 500f;
     private float WaterY = 0.15f;
 
     private Color seaFog = new Color(0.243f, 0.349f, 0.412f);
@@ -63,8 +63,8 @@ public class SwimPlayer : MonoBehaviour
         move = transform.forward * forward * Speed * Time.deltaTime;
         if (transform.position.y > WaterY) move.y = 0f;
         rb.AddForce(move);
-        if(transform.position.y > WaterY) rb.AddForce(Vector3.down * 0.5f);
-        else rb.AddForce(Vector3.up * 0.2f);
+        if(transform.position.y > WaterY) rb.AddForce(Vector3.down * 0.6f);
+        else rb.AddForce(Vector3.up * 0.3f);
 
         if (transform.position.y < WaterY - 0.1f)
         {
