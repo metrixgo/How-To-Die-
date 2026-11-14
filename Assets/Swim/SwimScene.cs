@@ -15,8 +15,6 @@ public class SwimScene : MonoBehaviour
     [SerializeField] private Renderer sea;
     [SerializeField] private AudioSource waves;
     [SerializeField] private AudioSource creep;
-    private DepthOfField dof;
-    private Vignette v;
 
     [Header("Dialogue")]
     [SerializeField] private GameObject focus;
@@ -33,8 +31,9 @@ public class SwimScene : MonoBehaviour
     {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
-        volume.profile.TryGet(out dof);
-        volume.profile.TryGet(out v);
+
+        RenderSettings.skybox = new Material(RenderSettings.skybox);
+        sea.material = new Material(sea.material);
 
         input = new GameInput();
         skipAction = input.Game.Skip;
@@ -76,9 +75,8 @@ public class SwimScene : MonoBehaviour
     private IEnumerator Dark()
     {
         float t = 0f, l = 6f, sSun = sun.intensity, sV = waves.volume, eV = 0.2f;
-        Color sCol = RenderSettings.skybox.GetColor("_SkyColor"), eCol = new Color(0.192f, 0.231f, 0.278f);
+        Color sCol = RenderSettings.skybox.GetColor("_SkyColor"), eCol = new Color(0.192f, 0.231f, 0.278f); ;
         Color sSeaCol = sea.material.GetColor("Color_36218622185947c6a5ae36366d8e21d8"), eSeaCol = new Color(0.047f, 0.071f, 0.129f);
-
         while (t < l)
         {
             waves.volume = Mathf.Lerp(sV, eV, t / l);

@@ -13,7 +13,7 @@ public class BrotherSwim : MonoBehaviour
     [SerializeField] private PlayerController player;
     [SerializeField] private AudioSource writingEffectsPlayer;
 
-    private bool gotGoggles = false;
+    private bool gotGoggles = true;
 
     private GameInput input;
     private InputAction skipAction;
@@ -71,11 +71,30 @@ public class BrotherSwim : MonoBehaviour
         {
             focus.SetActive(false);
             anim.SetInteger("State", 1);
-            float t = 0f, l = 5f, end = sa.Container.Spline.ConvertIndexUnit(5, PathIndexUnit.Knot, PathIndexUnit.Normalized);
+            float t = 0f, l = 3f, start = 0f, end = sa.Container.Spline.ConvertIndexUnit(5, PathIndexUnit.Knot, PathIndexUnit.Normalized);
             while (t < l)
             {
                 t += Time.deltaTime;
-                sa.NormalizedTime = Mathf.Lerp(0f, end, t / l);
+                sa.NormalizedTime = Mathf.Lerp(start, end, t / l);
+                yield return null;
+            }
+
+            anim.SetInteger("State", 2);
+            yield return new WaitForSeconds(1.4f);
+
+            t = 0f; l = 1f; start = end; end = sa.Container.Spline.ConvertIndexUnit(7, PathIndexUnit.Knot, PathIndexUnit.Normalized);
+            while (t < l)
+            {
+                t += Time.deltaTime;
+                sa.NormalizedTime = Mathf.Lerp(start, end, t / l);
+                yield return null;
+            }
+
+            t = 0f; l = 3f; start = end; end = sa.Container.Spline.ConvertIndexUnit(8, PathIndexUnit.Knot, PathIndexUnit.Normalized);
+            while (t < l)
+            {
+                t += Time.deltaTime;
+                sa.NormalizedTime = Mathf.Lerp(start, end, t / l);
                 yield return null;
             }
         }
