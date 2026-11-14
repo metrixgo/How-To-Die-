@@ -11,10 +11,10 @@ public class SwimPlayer : MonoBehaviour
     [SerializeField] private AudioSource seaWave;
     [SerializeField] private Volume volume;
     private Vignette v;
-    private LiftGammaGain lgg;
 
-    private float Speed = 500f;
-    public float WaterY = 0.05f;
+    private float Speed = 200f;
+    private float WaterY = 0.15f;
+
     private Color seaFog = new Color(0.243f, 0.349f, 0.412f);
 
     private GameInput input;
@@ -30,7 +30,6 @@ public class SwimPlayer : MonoBehaviour
     private void Awake()
     {
         volume.profile.TryGet(out v);
-        volume.profile.TryGet(out lgg);
 
         input = new GameInput();
         moveAction = input.Player.Move;
@@ -64,17 +63,16 @@ public class SwimPlayer : MonoBehaviour
         move = transform.forward * forward * Speed * Time.deltaTime;
         if (transform.position.y > WaterY) move.y = 0f;
         rb.AddForce(move);
-        if(transform.position.y > WaterY) rb.AddForce(Vector3.down * 2f);
-        else rb.AddForce(Vector3.up * 1f);
+        if(transform.position.y > WaterY) rb.AddForce(Vector3.down * 0.5f);
+        else rb.AddForce(Vector3.up * 0.2f);
 
         if (transform.position.y < WaterY - 0.1f)
         {
             RenderSettings.fogColor = Color.Lerp(RenderSettings.fogColor, seaFog, Time.deltaTime);
             RenderSettings.fogDensity = Mathf.Lerp(RenderSettings.fogDensity, 0.1f, Time.deltaTime);
-            underwater.volume = Mathf.Lerp(underwater.volume, 0.7f, Time.deltaTime * 2f);
-            seaWave.volume = Mathf.Lerp(seaWave.volume, 0.2f, Time.deltaTime * 2f);
-            swimFilter.cutoffFrequency = 1500f;
-            lgg.active = true;
+            underwater.volume = Mathf.Lerp(underwater.volume, 0.5f, Time.deltaTime * 2f);
+            seaWave.volume = Mathf.Lerp(seaWave.volume, 0.1f, Time.deltaTime * 2f);
+            swimFilter.cutoffFrequency = 2000f;
         }
         else
         {
@@ -83,10 +81,9 @@ public class SwimPlayer : MonoBehaviour
             underwater.volume = Mathf.Lerp(underwater.volume, 0f, Time.deltaTime * 5f);
             seaWave.volume = Mathf.Lerp(seaWave.volume, 0.7f, Time.deltaTime * 5f);
             swimFilter.cutoffFrequency = 5007.7f;
-            lgg.active = false;
         }
 
-        if(forward > 0.1f) swim.volume = 0.7f;
+        if(forward > 0.1f) swim.volume = 1f;
         else swim.volume = 0.05f;
     }
 }
